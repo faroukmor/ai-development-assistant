@@ -1,1 +1,2 @@
-print("hello world")
+import os
+print(help(os.path))
