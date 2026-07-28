@@ -1,4 +1,5 @@
 import os 
+import project_scanner as ps
 
 EXTENSION_MAP = {
         '.py': 'Python',
@@ -27,4 +28,9 @@ class ProjectFile:
         self.last_time_edited = os.path.getmtime(path) 
     
 
-
+def files_to_objects(files_list):
+    files_obj = []
+    for file in files_list:
+        files_obj.append(ProjectFile(file))
+        
+    return files_obj
