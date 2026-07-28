@@ -6,12 +6,6 @@ The goal of this project is to build an intelligent assistant capable of underst
 
 Unlike traditional AI chatbots, the assistant builds knowledge about an entire codebase and helps developers navigate, understand, maintain, and improve it.
 
-## Current Status
-
-Sprint 0
-
-Project Definition
-
 ## License
 
 MIT
