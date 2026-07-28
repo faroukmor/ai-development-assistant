@@ -43,16 +43,3 @@ def scan_project_obj(path):
     
 
     return files_files"""
-
-
-
-
-file_obj = scan_project_obj(path)
-for file in file_obj:
-    print(file.path)
-    print(file.name)
-    print(file.ext)
-    print(file.size)
-    print(file.programingLanguage)
-    print(file.last_time_edited)
-    
