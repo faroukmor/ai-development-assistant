@@ -6,14 +6,7 @@ PROJECT_TYPE_RULES = {
     "Cargo.toml"        : "Rust",
     "pom.xml"           : "Java",
 }
-ENTRY_POINT_NAMES = {
-    "main.py",
-    "app.py",
-    "run.py",
-    "server.py",
-    "manage.py",
-}
-class ProjectAnalyzer:
+class ProjectTypeAnalyzer:
     def __init__(self,project):
         self.project = project
     def detect_project_type(self):
@@ -39,9 +32,3 @@ class ProjectAnalyzer:
         
         self.project.type = max(language_points, key=language_points.get)
         return self.project.type
-
-    def detect_entry_points(self):
-        for file in self.project.files:
-            if file.name in ENTRY_POINT_NAMES: self.project.entry_points.append(file)
-
-        return self.project.entry_points
