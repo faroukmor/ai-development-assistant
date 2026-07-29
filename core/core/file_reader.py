@@ -1,8 +1,14 @@
-import project_scanner as prs
 import os
-import projectFile as pf
 
-def read_file(file_path):
+"""
+def read_file(file):
+    if os.path.isdir(file.path):
+        return 
+    
+    with open(file.path, encoding="utf-8") as f:
+        file.content = f.read()
+"""
+def read(file_path):
     if os.path.isdir(file_path):
         return 
     
@@ -11,26 +17,19 @@ def read_file(file_path):
     return file_content
 
 
-def read_file_obj(file):
-    if os.path.isdir(file.path):
-        return 
-    
-    with open(file.path, encoding="utf-8") as f:
-        file.content = f.read()
-
-
-path = r"C:\Users\HP\Documents\PYTHON Project\ai-development-assistant"
+"""
+path = r"C:\\Users\\HP\\Documents\\PYTHON Project\\ai-development-assistant"
 files = prs.scan_project(path)
-
 
 file = pf.ProjectFile(files[3])
 print(file.path)
 print(file.name)
 print(file.ext)
 print(file.size)
-print(file.programingLanguage)
+print(file.programming_language)
 print(file.last_time_edited)
 
-read_file_obj(file)
+read(file)
 
 print(file.content)
+"""

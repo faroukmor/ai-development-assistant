@@ -1,5 +1,5 @@
 import os 
-import project_scanner as ps
+import file_reader
 
 EXTENSION_MAP = {
         '.py': 'Python',
@@ -26,7 +26,10 @@ class ProjectFile:
         self.content = ""
         self.programming_language = EXTENSION_MAP.get(self.ext.lower(), "unknown")
         self.last_time_edited = os.path.getmtime(path) 
-    
+
+    def read_content(self):
+        self.content = file_reader.read(self.path)
+
 
 def files_to_objects(files_list):
     files_obj = []
@@ -34,3 +37,4 @@ def files_to_objects(files_list):
         files_obj.append(ProjectFile(file))
         
     return files_obj
+

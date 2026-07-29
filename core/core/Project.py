@@ -26,6 +26,8 @@ class Project:
         "unknown"    : 0
 
 }
+        self.type = None
+        self.entry_points = []
         self.structure = None
         self.dependencies = None
 
@@ -47,16 +49,22 @@ class Project:
 
             
             self.total_size += file.size
-            
 
+    def get_file_by_path(self,path):
+        for file in self.files: 
+            if path == file.path:
+                return file
+
+        return None
+
+#just for testing
+"""
 path = "C:\\Users\\HP\\Documents\\PYTHON Project\\ai-development-assistant"
-
 project  = Project(path)
 print(f"{project.name=}")
 print(f"{project.languages=}")
 project.load_files()
 project.build_index()
-print(f"{project.languages=}")
-print(f"{project.readme=}")
-print(f"{project.total_size=}")
-
+for file in project.files:
+     print(file.name)
+"""
