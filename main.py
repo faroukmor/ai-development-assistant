@@ -7,8 +7,12 @@ project = P.Project(path=path)
 
 assistant = ai.AIDevelopmentAssistant(project)
 
-answer = assistant.ask(
-    "اشرح هذا المشروع."
-)
+while(1):
+    user_input = input("المستخدم (خروج):")
+    if user_input == "خروج":
+        break
+    answer = assistant.ask(
+        f"{user_input}."
+    )
 
-print(answer)
+    print("المساعد الذكي:" + answer)
