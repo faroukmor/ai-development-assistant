@@ -2,6 +2,7 @@ import project_scanner as ps
 import projectFile
 import os 
 
+
 class Project:
     def __init__(self,path):
         self.name = os.path.basename(path)
@@ -9,6 +10,10 @@ class Project:
         self.files = None
         self.readme = None
         self.total_size = 0
+        self.type = None
+        self.entry_points = []
+        self.structure = None
+        self.dependencies = []
         self.languages = {
         'Python'     : 0,
         'JavaScript' : 0,
@@ -24,12 +29,8 @@ class Project:
         'HTML'       : 0,
         'CSS'        : 0,
         "unknown"    : 0
-
 }
-        self.type = None
-        self.entry_points = []
-        self.structure = None
-        self.dependencies = None
+        
 
     def load_files(self):
         elements = ps.scan_project(self.path)
@@ -56,6 +57,14 @@ class Project:
                 return file
 
         return None
+
+    def get_files_by_language(self,language_name):
+        files = []
+        for file in self.files:
+            if language_name == file.programming_language:
+                files.append(file)
+
+        return files
 
 #just for testing
 """
