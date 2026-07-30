@@ -29,7 +29,9 @@ class ProjectContextBuilder:
         return dependencies
 
     def build_context(self):
-        return f"""
+        if self.project.context is not None:
+            return self.project.context
+        context = f"""
                 Project Name: {self.project.name}
 
                 README: {self.project.readme}       
@@ -44,3 +46,5 @@ class ProjectContextBuilder:
 
                 Files: {self.build_files()}
                 """
+        self.project.context = context
+        return context

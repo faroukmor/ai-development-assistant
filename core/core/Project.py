@@ -1,5 +1,5 @@
-import project_scanner as ps
-import projectFile
+import core.core.project_scanner as ps
+import core.core.projectFile as pf
 import os 
 
 
@@ -14,6 +14,7 @@ class Project:
         self.entry_points = []
         self.structure = None
         self.dependencies = []
+        self.context = None
         self.languages = {
         'Python'     : 0,
         'JavaScript' : 0,
@@ -33,13 +34,17 @@ class Project:
         
 
     def load_files(self):
+        if self.files is not None:
+            return
         elements = ps.scan_project(self.path)
         files = ps.get_files(elements)
 
-        self.files = projectFile.files_to_objects(files)
+        self.files = pf.files_to_objects(files)
 
 
     def build_index(self):
+        if self.total_size != 0:
+            return
         for file in self.files:
             if file.programming_language in self.languages:
                 self.languages[file.programming_language] += 1

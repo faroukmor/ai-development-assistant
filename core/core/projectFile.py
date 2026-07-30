@@ -1,5 +1,5 @@
 import os 
-import file_reader
+import core.core.file_reader as fr
 
 EXTENSION_MAP = {
         '.py': 'Python',
@@ -28,7 +28,7 @@ class ProjectFile:
         self.last_time_edited = os.path.getmtime(path) 
 
     def read_content(self):
-        self.content = file_reader.read(self.path)
+        self.content = fr.read(self.path)
 
 
 def files_to_objects(files_list):
