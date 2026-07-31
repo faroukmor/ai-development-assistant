@@ -1,11 +1,14 @@
-import core.core.project as P
-import core.core.assistant.ai_assistant as ai
+import core.project.project as P
+import core.assistant.ai_assistant as ai
 
 
-path = r"C:\Users\HP\Documents\PYTHON Project\ai-development-assistant"
-project = P.Project(path=path)
+
+project_path = input(r"enter project path:")
+
+project = P.Project(project_path)
 
 assistant = ai.AIDevelopmentAssistant(project)
+
 
 while(1):
     user_input = input("المستخدم (خروج):")

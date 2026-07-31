@@ -1,5 +1,5 @@
 import os 
-import core.core.file_reader as fr
+import core.project.file_reader as fr
 
 EXTENSION_MAP = {
         '.py': 'Python',
@@ -21,8 +21,10 @@ class ProjectFile:
     def __init__(self,path):
         self.path = path
         self.name = os.path.basename(path)
-        _ , self.ext = os.path.splitext(path)
+        self.stem , self.ext = os.path.splitext(self.name)
+        self.stem = self.stem.lower()
         self.size = os.path.getsize(path)
+        self.keywords = self.stem.split("_")
         self.content = ""
         self.programming_language = EXTENSION_MAP.get(self.ext.lower(), "unknown")
         self.last_time_edited = os.path.getmtime(path) 

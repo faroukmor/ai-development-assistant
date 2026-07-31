@@ -26,8 +26,8 @@ class ProjectTypeAnalyzer:
         for file in self.project.files:
             if file.name in PROJECT_TYPE_RULES: language_points[PROJECT_TYPE_RULES[file.name]] += 5
 
-        most_used_language = max(self.project.languages, key=self.project.languages.get)   
-        language_points[most_used_language]+=2
+        #most_used_language = max(self.project.languages, key=self.project.languages.get)   
+        #language_points[most_used_language]+=2
 
         
         self.project.type = max(language_points, key=language_points.get)

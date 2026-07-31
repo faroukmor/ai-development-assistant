@@ -5,6 +5,7 @@ ENTRY_POINT_NAMES = {
     "server.py",
     "manage.py",
 }
+
 class EntryPointAnalyzer:
     def __init__(self,project):
         self.project = project

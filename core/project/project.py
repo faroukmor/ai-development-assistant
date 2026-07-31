@@ -1,5 +1,5 @@
-import core.core.project_scanner as ps
-import core.core.projectFile as pf
+import core.project.project_scanner as ps
+import core.project.project_file as pf
 import os 
 
 
@@ -14,7 +14,6 @@ class Project:
         self.entry_points = []
         self.structure = None
         self.dependencies = []
-        self.context = None
         self.languages = {
         'Python'     : 0,
         'JavaScript' : 0,
@@ -49,7 +48,7 @@ class Project:
             if file.programming_language in self.languages:
                 self.languages[file.programming_language] += 1
                 if file.name.lower() == "readme.md": 
-                                self.readme = file.path
+                                self.readme = file
             else:
                 self.languages["unknown"] += 1
 

@@ -1,11 +1,11 @@
 import ollama
 
-MODEL_NAME = 'qwen2.5:3b'
+
 
 
 class LLMClient:
-    def __init__(self):
-        pass
+    def __init__(self,model_name):
+        self.model_name = model_name
 
     def ask(self,system_prompt, user_prompt):
         messages = [
@@ -14,7 +14,7 @@ class LLMClient:
         ]
 
         response = ollama.chat(
-            model=MODEL_NAME,
+            model=self.model_name,
             messages=messages,
             options={
                 "temperature": 0,
