@@ -1,5 +1,3 @@
-import core.project.project_scanner as ps
-import core.project.project_file as pf
 import os 
 
 
@@ -30,31 +28,9 @@ class Project:
         'CSS'        : 0,
         "unknown"    : 0
 }
-        
+        self.is_indexed = False
 
-    def load_files(self):
-        if self.files is not None:
-            return
-        elements = ps.scan_project(self.path)
-        files = ps.get_files(elements)
-
-        self.files = pf.files_to_objects(files)
-
-
-    def build_index(self):
-        if self.total_size != 0:
-            return
-        for file in self.files:
-            if file.programming_language in self.languages:
-                self.languages[file.programming_language] += 1
-                if file.name.lower() == "readme.md": 
-                                self.readme = file
-            else:
-                self.languages["unknown"] += 1
-
-            
-            self.total_size += file.size
-
+    
     def get_file_by_path(self,path):
         for file in self.files: 
             if path == file.path:

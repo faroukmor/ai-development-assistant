@@ -11,11 +11,11 @@ assistant = ai.AIDevelopmentAssistant(project)
 
 
 while(1):
-    user_input = input("المستخدم (خروج):")
-    if user_input == "خروج":
+    user_input = input("                USER(q to quit):")
+    if user_input.lower() == "q":
         break
     answer = assistant.ask(
         f"{user_input}."
     )
 
-    print("المساعد الذكي:" + answer)
+    print("AI ASSISTANT:" + answer)

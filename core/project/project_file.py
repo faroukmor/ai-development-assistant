@@ -28,7 +28,7 @@ class ProjectFile:
         self.content = ""
         self.programming_language = EXTENSION_MAP.get(self.ext.lower(), "unknown")
         self.last_time_edited = os.path.getmtime(path) 
-
+        self.symbols = None
     def read_content(self):
         self.content = fr.read(self.path)
 
