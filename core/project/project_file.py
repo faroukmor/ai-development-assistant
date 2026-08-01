@@ -24,11 +24,12 @@ class ProjectFile:
         self.stem , self.ext = os.path.splitext(self.name)
         self.stem = self.stem.lower()
         self.size = os.path.getsize(path)
-        self.keywords = self.stem.split("_")
+        self.search_terms = self.stem.split("_")
         self.content = ""
         self.programming_language = EXTENSION_MAP.get(self.ext.lower(), "unknown")
         self.last_time_edited = os.path.getmtime(path) 
-        self.symbols = None
+        self.symbols = []
+
     def read_content(self):
         self.content = fr.read(self.path)
 

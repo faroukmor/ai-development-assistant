@@ -19,3 +19,5 @@ while(1):
     )
 
     print("AI ASSISTANT:" + answer)
+ 
+#projectpath(just for testing):   C:\Users\HP\Documents\PYTHON Project\ai-development-assistant

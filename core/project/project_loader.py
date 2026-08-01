@@ -1,5 +1,5 @@
-import project_scanner as ps
-import project_file as pf
+import core.project.project_scanner as ps
+import core.project.project_file as pf
 
 class ProjectLoader:
     def __init__(self,project):

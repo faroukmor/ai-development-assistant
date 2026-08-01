@@ -1,5 +1,5 @@
 import core.analyzers.analysis_pipeline as AP
-import project_loader as PL
+import core.project.project_loader as PL
 class ProjectIndexer:
     def __init__(self,project):
         self.project = project

@@ -1,6 +1,6 @@
-import project_type_analyzer as pta
-import entry_point_analyzer as epa
-import symbols_analyzer as sa
+import core.analyzers.project_type_analyzer as pta
+import core.analyzers.entry_point_analyzer as epa
+import core.analyzers.symbols_analyzer as sa
 
 
 class ProjectAnalyzer:
