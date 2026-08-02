@@ -6,15 +6,7 @@ class SymbolAnalyzer:
         self.project = project
 
 
-    def add_search_term(self, file, term):
-        term = term.lower()
-
-        if term not in file.search_terms:
-            file.search_terms.append(term)
-
-        for part in term.split("_"):
-            if part not in file.search_terms:
-                file.search_terms.append(part)
+    
 
     def detect_python_symbols(self,file):
 
@@ -30,15 +22,12 @@ class SymbolAnalyzer:
             if isinstance(node, ast.ClassDef):
                 sym = S.Symbol(name=node.name,symbol_type="class",line=node.lineno)
                 file.symbols.append(sym)
-                self.add_search_term(file, sym.name)
             elif isinstance(node, ast.FunctionDef):
                 sym = S.Symbol(name=node.name,symbol_type="function",line=node.lineno)
                 file.symbols.append(sym)
-                self.add_search_term(file, sym.name)
             elif isinstance(node, ast.AsyncFunctionDef):
                 sym = S.Symbol(name=node.name,symbol_type="async_function",line=node.lineno)
                 file.symbols.append(sym)
-                self.add_search_term(file, sym.name)
 
 
     def detect_java_symbols(self,file):

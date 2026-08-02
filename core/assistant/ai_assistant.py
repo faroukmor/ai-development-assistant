@@ -1,7 +1,7 @@
 import core.context.project_context_builder as PCB
 import core.llm.llm_client as llm_client
 import core.project.project_indexer as PI
-import core.context.context_selector as cs
+import core.retrieval.file_search as cs
 class AIDevelopmentAssistant:
     def __init__(self,project):
         self.project = project
@@ -9,10 +9,11 @@ class AIDevelopmentAssistant:
     def ask(self,user_prompt):
         PI.ProjectIndexer(self.project).build()
         
-        selector = cs.ContextSelector(self.project)
+        selector = cs.FileSearch(self.project)
 
-        relevant_files = selector.get_relevant_files(user_prompt)
+        relevant_files = selector.search(user_prompt)
 
+        
         context = PCB.ProjectContextBuilder(self.project,relevant_files).build_context()
         messages = [
                     {
@@ -47,6 +48,7 @@ class AIDevelopmentAssistant:
                         "content": user_prompt
                     }
                 ]
+        exit
         model = llm_client.LLMClient('qwen2.5:3b')
         response = model.ask(messages)
         return response

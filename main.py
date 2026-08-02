@@ -15,7 +15,7 @@ while(1):
     if user_input.lower() == "q":
         break
     answer = assistant.ask(
-        f"{user_input}."
+        f"{user_input}"
     )
 
     print("AI ASSISTANT:" + answer)
