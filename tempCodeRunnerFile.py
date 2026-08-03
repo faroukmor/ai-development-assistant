@@ -1,1 +1,0 @@
-C:\Users\HP\Documents\PYTHON Project\ai-development-assistant\core

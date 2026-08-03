@@ -1,6 +1,6 @@
-import file_search as FS
+import core.retrieval.file_search as FS
 import core.retrieval.symbol_search as SS
-
+import core.project.project as P
 class HybridRetriever:
     def __init__(self,project):
         self.project = project
@@ -27,5 +27,5 @@ class HybridRetriever:
         results += FS.FileSearch(self.project).search(question)
         results += SS.SymbolSearch(self.project).search(question)
         #results += EmbeddingSearch(self.project).search(question)
-        
+        print(self.rank_results(results))
         return self.rank_results(results)

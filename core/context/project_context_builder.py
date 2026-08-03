@@ -86,4 +86,5 @@ class ProjectContextBuilder:
                 
                 {self.build_selected_files()}
                 """
+        print(f"{context=}")
         return context

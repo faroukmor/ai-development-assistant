@@ -1,7 +1,7 @@
 import core.context.project_context_builder as PCB
 import core.llm.llm_client as llm_client
 import core.project.project_indexer as PI
-import core.retrieval.file_search as cs
+import core.retrieval.hybrid_retriever as HR
 class AIDevelopmentAssistant:
     def __init__(self,project):
         self.project = project
@@ -9,9 +9,15 @@ class AIDevelopmentAssistant:
     def ask(self,user_prompt):
         PI.ProjectIndexer(self.project).build()
         
-        selector = cs.FileSearch(self.project)
+        retriever = HR.HybridRetriever(self.project)
 
-        relevant_files = selector.search(user_prompt)
+        results = retriever.search(user_prompt)
+        for result in results:
+            print(f"{result.file.name=}")
+            print(f"{result.score=}")
+            print(f"{result.reason=}")
+
+        relevant_files = [r.file for r in results]
 
         
         context = PCB.ProjectContextBuilder(self.project,relevant_files).build_context()
