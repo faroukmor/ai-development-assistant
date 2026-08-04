@@ -7,6 +7,14 @@ path = r"C:\Users\HP\Documents\PYTHON Project\ai-development-assistant"
 project = P.Project(path)
 
 PI.ProjectIndexer(project).build()
-results = HR.HybridRetriever(project).search("what is build , HybridRetriever")
+for file in project.files:
+
+    for symbol in file.symbols:
+        print(symbol.name)
+
+        if symbol.parent:
+            print(" parent:", symbol.parent.name)
+
+        print(" children:", [c.name for c in symbol.children])
 
 

@@ -1,34 +1,24 @@
-import core.project.symbol as S
+import core.analyzers.python_symbol_visitor as PSV
 import ast
 
 class SymbolAnalyzer:
     def __init__(self, project):
         self.project = project
 
-
     
-
     def detect_python_symbols(self,file):
 
         with open(file.path, "r", encoding="utf-8") as f:
             source = f.read()
-
+            
         try:
             tree = ast.parse(source)
         except SyntaxError:
             return
 
-        for node in ast.walk(tree):
-            if isinstance(node, ast.ClassDef):
-                sym = S.Symbol(name=node.name,symbol_type="class",line=node.lineno)
-                file.symbols.append(sym)
-            elif isinstance(node, ast.FunctionDef):
-                sym = S.Symbol(name=node.name,symbol_type="function",line=node.lineno)
-                file.symbols.append(sym)
-            elif isinstance(node, ast.AsyncFunctionDef):
-                sym = S.Symbol(name=node.name,symbol_type="async_function",line=node.lineno)
-                file.symbols.append(sym)
-
+        visitor = PSV.PythonSymbolVisitor(file)
+        visitor.visit(tree)
+        
 
     def detect_java_symbols(self,file):
         pass
