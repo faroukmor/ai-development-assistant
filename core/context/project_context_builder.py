@@ -1,7 +1,7 @@
 class ProjectContextBuilder:
-    def __init__(self,project,relevant_files):
+    def __init__(self,project,results):
         self.project = project
-        self.relevant_files = relevant_files
+        self.result_files = results
 
 
     def build_languages(self):
@@ -15,13 +15,34 @@ class ProjectContextBuilder:
     def build_selected_files(self):
         text = ""
 
-        for file in self.relevant_files:
+        for result in self.result_files:
+
+            file = result.file
+
             if not file.content:
                 file.read_content()
+
+            symbols = ""
+            for symbol in file.symbols:
+                symbols += f"""
+                    Name: {symbol.name}
+                    Type: {symbol.type}
+                    Signature: {symbol.signature}
+                    Line: {symbol.line}
+                    Docstring: {symbol.docstring}
+                    Parent: {symbol.parent.name if symbol.parent else None}
+                    """
 
             text += f"""
                     File: {file.name}
 
+                    Relevance: {result.score}
+                    Reason: {result.reason}
+
+                    Symbols:
+                    {symbols}
+
+                    Source:
                     {file.content}
 
                     -----------------------
@@ -82,8 +103,8 @@ class ProjectContextBuilder:
                 
                 {self.build_dependencies()}
 
-                Relevant Files: 
-                
+                Relevant Files:
+
                 {self.build_selected_files()}
                 """
         print(f"{context=}")
