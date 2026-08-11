@@ -1,14 +1,8 @@
 
-                Project Name: 
-                
-                ai-development-assistant
+                Project Name: ai-development-assistant
 
-                README: 
-                
-                README.md  
-
+                README: README.md  
                 content: 
-                
                 # AI Development Assistant
 
 An offline AI-powered software engineering assistant.
@@ -20,18 +14,18 @@ Unlike traditional AI chatbots, the assistant builds knowledge about an entire c
 ## License
 
 MIT    
-
-                Project Type: 
-                
-                Python
+                ----------------------------
+                Project Type: Python
 
                 Languages: 
-                
-                Python:25Markdown:8unknown:1
+                Python:25
+Markdown:8
+unknown:2
 
-                Entry Points: 
-                
-                main.py:import core.project.project as P
+
+                Entry Points:
+                main.py
+content:import core.project.project as P
 import core.assistant.ai_assistant as ai
 
 
@@ -54,63 +48,80 @@ while(1):
     print("AI ASSISTANT:" + answer)
 
 #projectpath(just for testing):   C:\Users\HP\Documents\PYTHON Project\ai-development-assistant
+---------------------
 
 
                 Dependencies: 
-                
-                
 
                 Relevant Files:
-
                 
-                    File: symbols_analyzer.py
-
+                    -----------------------
+                    File: ai_assistant.py
                     Relevance: 80
                     Reason: Matched symbol
-
                     
                         Relevant Symbol:
-                        Name: detect_python_symbols
-                        Type: function
-                        Signature: detect_python_symbols(self, file)
-                        Line: 9
-                        Parent: SymbolAnalyzer
+                        Name: AIDevelopmentAssistant
+                        Type: class
+                        Signature: None
+                        Line: 5
+                        Parent: 
                         Docstring: None
-
                     Source:
-                    import core.analyzers.python_symbol_visitor as PSV
-import ast
 
-class SymbolAnalyzer:
-    def __init__(self, project):
+                    import core.context.project_context_builder as PCB
+import core.llm.llm_client as llm_client
+import core.project.project_indexer as PI
+import core.retrieval.hybrid_retriever as HR
+class AIDevelopmentAssistant:
+    def __init__(self,project):
         self.project = project
 
-    
-    def detect_python_symbols(self,file):
-
-        with open(file.path, "r", encoding="utf-8") as f:
-            source = f.read()
-            
-        try:
-            tree = ast.parse(source)
-        except SyntaxError:
-            return
-
-        visitor = PSV.PythonSymbolVisitor(file)
-        visitor.visit(tree)
+    def ask(self,user_prompt):
+        PI.ProjectIndexer(self.project).build()
         
+        retriever = HR.HybridRetriever(self.project)
 
-    def detect_java_symbols(self,file):
-        pass
+        results = retriever.search(user_prompt)
+        
+        context = PCB.ProjectContextBuilder(self.project,results).build_context()
+        messages = [
+                    {
+                        "role": "system",
+                        "content": """
+                You are an AI Development Assistant specialized in software engineering.
 
-    def detect_symbols(self):
-        for file in self.project.files:
+                Rules:
+                - Always answer in English.
+                - Base your answers ONLY on the provided project context.
+                - Never invent information.
+                - If the answer cannot be inferred from the context, say:
+                "I don't have enough information from the current project context."
+                - When possible, mention relevant file names, classes, or functions.
+                - Keep answers concise and technical.
+                """
+                    },
+                    {
+                    "role": "system",
+                    "content": f"""
+                    Project Context
 
-            if file.programming_language == "Python":
-                self.detect_python_symbols(file)
+                    The following information describes the current software project.
 
-            elif file.programming_language == "Java":
-                self.detect_java_symbols(file)
+                    Use it as your only source of truth.
+
+                    {context}
+                    """
+                    },
+                    {
+                        "role": "user",
+                        "content": user_prompt
+                    }
+                ]
+        exit
+        model = llm_client.LLMClient('qwen2.5:3b')
+        response = model.ask(messages)
+        return response
 
                     -----------------------
                     
