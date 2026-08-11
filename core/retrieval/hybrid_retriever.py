@@ -27,5 +27,4 @@ class HybridRetriever:
         results += FS.FileSearch(self.project).search(question)
         results += SS.SymbolSearch(self.project).search(question)
         #results += EmbeddingSearch(self.project).search(question)
-        print(self.rank_results(results))
         return self.rank_results(results)

@@ -8,7 +8,7 @@ class ProjectContextBuilder:
         languages = ""
         for language in self.project.languages:
             if  self.project.languages[language] == 0: continue
-            languages += language + ":" + str(self.project.languages[language]) 
+            languages += language + ":" + str(self.project.languages[language]) + "\n"
         return languages
 
 
@@ -16,35 +16,30 @@ class ProjectContextBuilder:
         text = ""
 
         for result in self.result_files:
-
+            if result.symbol:
+                matched_symbol = f"""
+                        Relevant Symbol:
+                        Name: {result.symbol.name}
+                        Type: {result.symbol.type}
+                        Signature: {result.symbol.signature}
+                        Line: {result.symbol.line}
+                        Parent: {result.symbol.parent.name if result.symbol.parent else ""}
+                        Docstring: {result.symbol.docstring}"""
+            else: matched_symbol = ""
             file = result.file
 
             if not file.content:
                 file.read_content()
 
-            symbols = ""
-            for symbol in file.symbols:
-                symbols += f"""
-                    Name: {symbol.name}
-                    Type: {symbol.type}
-                    Signature: {symbol.signature}
-                    Line: {symbol.line}
-                    Docstring: {symbol.docstring}
-                    Parent: {symbol.parent.name if symbol.parent else None}
-                    """
-
             text += f"""
+                    -----------------------
                     File: {file.name}
-
                     Relevance: {result.score}
                     Reason: {result.reason}
-
-                    Symbols:
-                    {symbols}
-
+                    {matched_symbol}
                     Source:
-                    {file.content}
 
+                    {file.content}
                     -----------------------
                     """
 
@@ -61,7 +56,9 @@ class ProjectContextBuilder:
         for entry_point in self.project.entry_points:
             if not entry_point.content:
                 entry_point.read_content()
-            entry_points += entry_point.name +":"+ entry_point.content +"\n"
+            entry_points += entry_point.name+"\n"
+            +"content:"+ entry_point.content+"\n"
+            +"---------------------\n"
         return entry_points
 
     def build_dependencies(self):
@@ -75,37 +72,26 @@ class ProjectContextBuilder:
         if self.project.readme and not self.project.readme.content:
             self.project.readme.read_content()
         context = f"""
-                Project Name: 
-                
-                {self.project.name}
+                Project Name: {self.project.name}
 
-                README: 
-                
-                {self.project.readme.name}  
-
+                README: {self.project.readme.name}  
                 content: 
-                
                 {self.project.readme.content}    
-
-                Project Type: 
-                
-                {self.project.type}
+                ----------------------------
+                Project Type: {self.project.type}
 
                 Languages: 
-                
                 {self.build_languages()}
 
-                Entry Points: 
-                
+                Entry Points:
                 {self.build_entry_points()}
 
-                Dependencies: 
-                
-                {self.build_dependencies()}
+                Dependencies: {self.build_dependencies()}
 
                 Relevant Files:
-
                 {self.build_selected_files()}
                 """
-        print(f"{context=}")
+        with open("context_test.txt", "w", encoding="utf-8") as file:
+            file.write(context)
+
         return context

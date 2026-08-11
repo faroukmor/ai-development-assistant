@@ -1,0 +1,117 @@
+
+                Project Name: 
+                
+                ai-development-assistant
+
+                README: 
+                
+                README.md  
+
+                content: 
+                
+                # AI Development Assistant
+
+An offline AI-powered software engineering assistant.
+
+The goal of this project is to build an intelligent assistant capable of understanding software projects instead of simply answering questions.
+
+Unlike traditional AI chatbots, the assistant builds knowledge about an entire codebase and helps developers navigate, understand, maintain, and improve it.
+
+## License
+
+MIT    
+
+                Project Type: 
+                
+                Python
+
+                Languages: 
+                
+                Python:25Markdown:8unknown:1
+
+                Entry Points: 
+                
+                main.py:import core.project.project as P
+import core.assistant.ai_assistant as ai
+
+
+
+project_path = input(r"enter project path:")
+
+project = P.Project(project_path)
+
+assistant = ai.AIDevelopmentAssistant(project)
+
+
+while(1):
+    user_input = input("                USER(q to quit):")
+    if user_input.lower() == "q":
+        break
+    answer = assistant.ask(
+        f"{user_input}"
+    )
+
+    print("AI ASSISTANT:" + answer)
+
+#projectpath(just for testing):   C:\Users\HP\Documents\PYTHON Project\ai-development-assistant
+
+
+                Dependencies: 
+                
+                
+
+                Relevant Files:
+
+                
+                    File: symbols_analyzer.py
+
+                    Relevance: 80
+                    Reason: Matched symbol
+
+                    
+                        Relevant Symbol:
+                        Name: detect_python_symbols
+                        Type: function
+                        Signature: detect_python_symbols(self, file)
+                        Line: 9
+                        Parent: SymbolAnalyzer
+                        Docstring: None
+
+                    Source:
+                    import core.analyzers.python_symbol_visitor as PSV
+import ast
+
+class SymbolAnalyzer:
+    def __init__(self, project):
+        self.project = project
+
+    
+    def detect_python_symbols(self,file):
+
+        with open(file.path, "r", encoding="utf-8") as f:
+            source = f.read()
+            
+        try:
+            tree = ast.parse(source)
+        except SyntaxError:
+            return
+
+        visitor = PSV.PythonSymbolVisitor(file)
+        visitor.visit(tree)
+        
+
+    def detect_java_symbols(self,file):
+        pass
+
+    def detect_symbols(self):
+        for file in self.project.files:
+
+            if file.programming_language == "Python":
+                self.detect_python_symbols(file)
+
+            elif file.programming_language == "Java":
+                self.detect_java_symbols(file)
+
+                    -----------------------
+                    
+                

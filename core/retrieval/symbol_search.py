@@ -14,6 +14,7 @@ class SymbolSearch:
                     result.append(SR.SearchResult(
                                                     file=file,
                                                     score=80,
-                                                    reason="Matched symbol"))
+                                                    reason="Matched symbol",
+                                                    symbol=symbol))
                     break
         return result
