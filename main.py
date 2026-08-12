@@ -3,7 +3,7 @@ import core.assistant.ai_assistant as ai
 
 
 
-project_path = input(r"enter project path:")
+project_path = r"C:\Users\HP\Documents\PYTHON Project\ai-development-assistant" #input(r"enter project path:")
 
 project = P.Project(project_path)
 
@@ -20,4 +20,4 @@ while(1):
 
     print("AI ASSISTANT:" + answer)
 
-#projectpath(just for testing):   C:\Users\HP\Documents\PYTHON Project\ai-development-assistant
+#projectpath(just for testing):   

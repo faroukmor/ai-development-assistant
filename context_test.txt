@@ -1,9 +1,18 @@
 
-                Project Name: ai-development-assistant
+Project Name: ai-development-assistant
+        
+Project Type: Python
+        
+Languages: 
+Python:26
+Markdown:8
+unknown:2
 
-                README: README.md  
-                content: 
-                # AI Development Assistant
+                
+
+README: README.md  
+content: 
+# AI Development Assistant
 
 An offline AI-powered software engineering assistant.
 
@@ -14,23 +23,16 @@ Unlike traditional AI chatbots, the assistant builds knowledge about an entire c
 ## License
 
 MIT    
-                ----------------------------
-                Project Type: Python
+----------------------------
 
-                Languages: 
-                Python:25
-Markdown:8
-unknown:2
-
-
-                Entry Points:
-                main.py
+Entry Points:
+main.py
 content:import core.project.project as P
 import core.assistant.ai_assistant as ai
 
 
 
-project_path = input(r"enter project path:")
+project_path = r"C:\Users\HP\Documents\PYTHON Project\ai-development-assistant" #input(r"enter project path:")
 
 project = P.Project(project_path)
 
@@ -47,82 +49,84 @@ while(1):
 
     print("AI ASSISTANT:" + answer)
 
-#projectpath(just for testing):   C:\Users\HP\Documents\PYTHON Project\ai-development-assistant
+#projectpath(just for testing):   
 ---------------------
 
 
-                Dependencies: 
+Dependencies: 
 
-                Relevant Files:
+Relevant Files:
+
+File: file_search.py
+Relevance: 80
+Reason: Matched symbol
                 
-                    -----------------------
-                    File: ai_assistant.py
-                    Relevance: 80
-                    Reason: Matched symbol
-                    
-                        Relevant Symbol:
-                        Name: AIDevelopmentAssistant
-                        Type: class
-                        Signature: None
-                        Line: 5
-                        Parent: 
-                        Docstring: None
-                    Source:
+Relevant Symbol:
+Name: FileSearch
+Type: class
+Signature: None
+Parent: 
+Docstring: None
 
-                    import core.context.project_context_builder as PCB
-import core.llm.llm_client as llm_client
-import core.project.project_indexer as PI
-import core.retrieval.hybrid_retriever as HR
-class AIDevelopmentAssistant:
+FileSearch: 
+class FileSearch:
     def __init__(self,project):
         self.project = project
 
-    def ask(self,user_prompt):
-        PI.ProjectIndexer(self.project).build()
-        
-        retriever = HR.HybridRetriever(self.project)
+    def search(self,question):
+        result = []
+        question_words = question.lower().replace("?", "").split()
 
-        results = retriever.search(user_prompt)
-        
-        context = PCB.ProjectContextBuilder(self.project,results).build_context()
-        messages = [
-                    {
-                        "role": "system",
-                        "content": """
-                You are an AI Development Assistant specialized in software engineering.
+        for file in self.project.files:
+            for term in file.search_terms:
+                if term in question_words:
+                    result.append(SR.SearchResult(
+                                        file=file,
+                                        score=40,
+                                        reason="Matched filename"
+                                    ))
+                    break
+        return result
 
-                Rules:
-                - Always answer in English.
-                - Base your answers ONLY on the provided project context.
-                - Never invent information.
-                - If the answer cannot be inferred from the context, say:
-                "I don't have enough information from the current project context."
-                - When possible, mention relevant file names, classes, or functions.
-                - Keep answers concise and technical.
-                """
-                    },
-                    {
-                    "role": "system",
-                    "content": f"""
-                    Project Context
-
-                    The following information describes the current software project.
-
-                    Use it as your only source of truth.
-
-                    {context}
-                    """
-                    },
-                    {
-                        "role": "user",
-                        "content": user_prompt
-                    }
-                ]
-        exit
-        model = llm_client.LLMClient('qwen2.5:3b')
-        response = model.ask(messages)
-        return response
-
-                    -----------------------
-                    
+File: hybrid_retriever.py
+Relevance: 80
+Reason: Matched symbol
                 
+Relevant Symbol:
+Name: HybridRetriever
+Type: class
+Signature: None
+Parent: 
+Docstring: None
+
+HybridRetriever: 
+class HybridRetriever:
+    def __init__(self,project):
+        self.project = project
+
+    def rank_results(self, results):
+        merged = {}
+
+        for result in results:
+            key = result.file.path
+
+            if key in merged:
+                merged[key].score += result.score
+            else:
+                merged[key] = result
+
+        return sorted(
+            merged.values(),
+            key=lambda r: r.score,
+            reverse=True
+        )
+    def search(self,question):
+        results = []
+
+        results += FS.FileSearch(self.project).search(question)
+        results += SS.SymbolSearch(self.project).search(question)
+        #results += EmbeddingSearch(self.project).search(question)
+        return self.rank_results(results)
+
+
+

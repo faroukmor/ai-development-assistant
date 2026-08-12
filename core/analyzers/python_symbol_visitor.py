@@ -15,6 +15,7 @@ class PythonSymbolVisitor(ast.NodeVisitor):
                         name=node.name,
                         symbol_type="class",
                         line=node.lineno,
+                        end_line=node.end_lineno,
                         docstring=ast.get_docstring(node)
                         )
 
@@ -37,6 +38,7 @@ class PythonSymbolVisitor(ast.NodeVisitor):
         sym = S.Symbol(name=node.name,
                        symbol_type="function",
                        line=node.lineno,
+                       end_line=node.end_lineno,
                        parent=self.current_parent,
                        signature=self.build_signature(node),
                        docstring=ast.get_docstring(node)
@@ -56,6 +58,7 @@ class PythonSymbolVisitor(ast.NodeVisitor):
         sym = S.Symbol( name=node.name,
                         symbol_type="async_function",
                         line=node.lineno,
+                        end_line=node.end_lineno,
                         parent=self.current_parent,
                         signature=self.build_signature(node),
                         docstring=ast.get_docstring(node)

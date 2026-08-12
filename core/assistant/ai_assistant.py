@@ -11,9 +11,9 @@ class AIDevelopmentAssistant:
         
         retriever = HR.HybridRetriever(self.project)
 
-        results = retriever.search(user_prompt)
+        retrievers = retriever.search(user_prompt)
         
-        context = PCB.ProjectContextBuilder(self.project,results).build_context()
+        context = PCB.ProjectContextBuilder(self.project,retrievers).build_context()
         messages = [
                     {
                         "role": "system",
