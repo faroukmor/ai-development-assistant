@@ -34,6 +34,18 @@ class PythonSymbolVisitor(ast.NodeVisitor):
         #رجعنا الاب القديم 
         self.current_parent = old_parent
 
+
+    def visit_Call(self, node):
+        parts = []
+        current = node.func
+        while not isinstance(current, ast.Name):
+            parts.append(current.attr)
+            current = current.value
+        parts.append(current.id) 
+        parts.reverse()
+        call_name = ".".join(parts)
+        self.file.(call_name)
+
     def visit_FunctionDef(self, node):
         sym = S.Symbol(name=node.name,
                        symbol_type="function",

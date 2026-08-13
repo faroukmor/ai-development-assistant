@@ -1,7 +1,7 @@
 import ast 
 
-
-code = """
+"""
+code = ""
 import core.project.symbol as S
 import ast
 
@@ -36,8 +36,7 @@ class SymbolAnalyzer:
                 self.detect_python_symbols(file)
             elif file.programming_language == "Java":
                 self.detect_java_symbols(file)
-"""
-
+""
 Classes = []
 Functions = []
 AsyncFunction = []
@@ -56,3 +55,32 @@ for node in ast.walk(tree):
 print("Classes:", Classes)
 print("Functions:", Functions)
 print("Async Functions:", AsyncFunction)
+"""
+
+
+source = """
+def hello(name):
+    print(name)
+    self.calculate(name)
+    obj.service.save(name)
+    obj.service.save.value()
+"""
+
+tree = ast.parse(source)
+
+class CallVisitor(ast.NodeVisitor):
+
+    def visit_Call(self, node):
+        parts = []
+        current = node.func
+        while not isinstance(current, ast.Name):
+            parts.append(current.attr)
+            current = current.value
+
+        parts.append(current.id) 
+        parts.reverse()
+        call_name = ".".join(parts)
+        print(call_name)
+
+visitor = CallVisitor()
+visitor.visit(tree)

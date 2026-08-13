@@ -8,4 +8,5 @@ class Symbol:
         self.children = []
         self.signature = signature
         self.docstring = docstring
+        self.calls = []
 
