@@ -34,17 +34,24 @@ class PythonSymbolVisitor(ast.NodeVisitor):
         #رجعنا الاب القديم 
         self.current_parent = old_parent
 
-
-    def visit_Call(self, node):
+    def get_callable_name(self,node):
         parts = []
-        current = node.func
-        while not isinstance(current, ast.Name):
-            parts.append(current.attr)
-            current = current.value
-        parts.append(current.id) 
-        parts.reverse()
-        call_name = ".".join(parts)
-        self.file.(call_name)
+        if isinstance(node, ast.Name):
+            return node.id
+        elif isinstance(node, ast.Attribute):
+            parts.append(node.attr)
+            parts.append(self.get_callable_name(node.value))
+            parts.reverse()
+            call_name = ".".join(parts)
+            return call_name
+        elif isinstance(node, ast.Call):
+            call_name = self.get_callable_name(node.func) + "()"
+            return call_name
+    def visit_Call(self, node):
+        if self.current_parent:
+            self.current_parent.calls.append(self.get_callable_name(node))
+
+        self.generic_visit(node)
 
     def visit_FunctionDef(self, node):
         sym = S.Symbol(name=node.name,
@@ -54,6 +61,7 @@ class PythonSymbolVisitor(ast.NodeVisitor):
                        parent=self.current_parent,
                        signature=self.build_signature(node),
                        docstring=ast.get_docstring(node)
+                       
         )
         
         if self.current_parent:
@@ -85,3 +93,4 @@ class PythonSymbolVisitor(ast.NodeVisitor):
         self.current_parent = sym
         self.generic_visit(node)
         self.current_parent = old_parent
+

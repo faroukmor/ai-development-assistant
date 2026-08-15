@@ -1,20 +1,35 @@
-import core.retrieval.hybrid_retriever as HR
-import core.project.project as P
-import core.project.project_indexer as PI
+import ast
+
+from core.analyzers.python_symbol_visitor import PythonSymbolVisitor
 
 
-path = r"C:\Users\HP\Documents\PYTHON Project\ai-development-assistant"
-project = P.Project(path)
-
-PI.ProjectIndexer(project).build()
-for file in project.files:
-
-    for symbol in file.symbols:
-        print(symbol.name)
-
-        if symbol.parent:
-            print(" parent:", symbol.parent.name)
-
-        print(" children:", [c.name for c in symbol.children])
+class FakeFile:
+    def __init__(self):
+        self.symbols = []
 
 
+source = """
+def test(name):
+    print(name)
+    self.save()
+    obj.service.save()
+    get_service().save()
+    save(calculate(name))
+"""
+
+
+file = FakeFile()
+
+tree = ast.parse(source)
+
+visitor = PythonSymbolVisitor(file)
+visitor.visit(tree)
+
+
+for symbol in file.symbols:
+    print(f"Symbol: {symbol.name}")
+    print(f"Type: {symbol.type}")
+    print(f"Parent: {symbol.parent.name if symbol.parent else None}")
+    print(f"Calls: {symbol.calls}")
+    print(f"Children: {[child.name for child in symbol.children]}")
+    print("-" * 40)
