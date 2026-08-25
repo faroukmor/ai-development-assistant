@@ -5,16 +5,29 @@ class SymbolSearch:
         self.project = project
 
     def search(self, question):
-        result = []
+        search_results = []
         question_words = question.lower().replace("?", "").split()
 
         for file in self.project.files:
             for symbol in file.symbols:
                 if symbol.name.lower() in question_words:
-                    result.append(SR.SearchResult(
+                    search_results.append(SR.SearchResult(
                                                     file=file,
                                                     score=80,
                                                     reason="Matched symbol",
                                                     symbol=symbol))
                     break
-        return result
+        return search_results
+    def find_by_name(self,name):
+        search_results = []
+        name = name.lower().split(".")[-1].replace("()", "")
+        for file in self.project.files:
+            for symbol in file.symbols:
+                if symbol.name.lower() == name:
+                    search_results.append(SR.SearchResult(
+                                                  file=file,
+                                                  score=999,
+                                                  reason="find_by_name",
+                                                  symbol=symbol))
+                    break
+        return search_results

@@ -34,22 +34,40 @@ class PythonSymbolVisitor(ast.NodeVisitor):
         #رجعنا الاب القديم 
         self.current_parent = old_parent
 
-    def get_callable_name(self,node):
+    def get_callable_name(self, node):
         parts = []
+
         if isinstance(node, ast.Name):
             return node.id
+
         elif isinstance(node, ast.Attribute):
             parts.append(node.attr)
             parts.append(self.get_callable_name(node.value))
             parts.reverse()
-            call_name = ".".join(parts)
-            return call_name
+
+            if None in parts:
+                return None
+
+            return ".".join(parts)
+
         elif isinstance(node, ast.Call):
-            call_name = self.get_callable_name(node.func) + "()"
-            return call_name
+            call_name = self.get_callable_name(node.func)
+
+            if call_name is None:
+                return None
+
+            return call_name + "()"
+
+        elif isinstance(node, ast.Constant):
+            return None
+
+
     def visit_Call(self, node):
         if self.current_parent:
-            self.current_parent.calls.append(self.get_callable_name(node))
+            call_name = self.get_callable_name(node)
+
+            if call_name is not None:
+                self.current_parent.calls.append(call_name)
 
         self.generic_visit(node)
 

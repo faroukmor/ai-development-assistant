@@ -7,12 +7,14 @@ class HybridRetriever:
 
     def rank_results(self, results):
         merged = {}
-
         for result in results:
             key = result.file.path
 
             if key in merged:
                 merged[key].score += result.score
+
+                if result.symbol and not merged[key].symbol:
+                    merged[key].symbol = result.symbol
             else:
                 merged[key] = result
 
@@ -23,8 +25,12 @@ class HybridRetriever:
         )
     def search(self,question):
         results = []
-
         results += FS.FileSearch(self.project).search(question)
-        results += SS.SymbolSearch(self.project).search(question)
+        results += SS.SymbolSearch(self.project).search(question)        
         #results += EmbeddingSearch(self.project).search(question)
+        
+        
+        
+
         return self.rank_results(results)
+    

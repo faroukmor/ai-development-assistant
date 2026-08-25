@@ -1,4 +1,4 @@
-import core.context.project_context_builder as PCB
+import core.context.context_builder as PCB
 import core.llm.llm_client as llm_client
 import core.project.project_indexer as PI
 import core.retrieval.hybrid_retriever as HR

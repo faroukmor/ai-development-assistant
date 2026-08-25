@@ -4,9 +4,9 @@ Project Name: ai-development-assistant
 Project Type: Python
         
 Languages: 
-Python:26
+Python:29
 Markdown:8
-unknown:2
+unknown:3
 
                 
 
@@ -57,61 +57,32 @@ Dependencies:
 
 Relevant Files:
 
-File: file_search.py
-Relevance: 80
-Reason: Matched symbol
-                
-Relevant Symbol:
-Name: FileSearch
-Type: class
-Signature: None
-Parent: 
-Docstring: None
+    File: hybrid_retriever.py
+    Relevance: 80
+    Reason: Matched symbol
 
-FileSearch: 
-class FileSearch:
-    def __init__(self,project):
-        self.project = project
+    Symbol:
+    Name: HybridRetriever
+    Type: class
+    Signature: None
+    Parent: 
+    Docstring: None
 
-    def search(self,question):
-        result = []
-        question_words = question.lower().replace("?", "").split()
-
-        for file in self.project.files:
-            for term in file.search_terms:
-                if term in question_words:
-                    result.append(SR.SearchResult(
-                                        file=file,
-                                        score=40,
-                                        reason="Matched filename"
-                                    ))
-                    break
-        return result
-
-File: hybrid_retriever.py
-Relevance: 80
-Reason: Matched symbol
-                
-Relevant Symbol:
-Name: HybridRetriever
-Type: class
-Signature: None
-Parent: 
-Docstring: None
-
-HybridRetriever: 
-class HybridRetriever:
+    Source:
+    class HybridRetriever:
     def __init__(self,project):
         self.project = project
 
     def rank_results(self, results):
         merged = {}
-
         for result in results:
             key = result.file.path
 
             if key in merged:
                 merged[key].score += result.score
+
+                if result.symbol and not merged[key].symbol:
+                    merged[key].symbol = result.symbol
             else:
                 merged[key] = result
 
@@ -122,11 +93,23 @@ class HybridRetriever:
         )
     def search(self,question):
         results = []
-
-        results += FS.FileSearch(self.project).search(question)
-        results += SS.SymbolSearch(self.project).search(question)
+        file_results = FS.FileSearch(self.project).search(question)
+        symbol_results = SS.SymbolSearch(self.project).search(question)        
         #results += EmbeddingSearch(self.project).search(question)
-        return self.rank_results(results)
+        
+        print("FILE RESULTS:")
+        for result in file_results:
+            print(result.file.name, result.score)
 
+        print("SYMBOL RESULTS:")
+        for result in symbol_results:
+            print(
+                result.symbol.name if result.symbol else None,
+                result.file.name
+            )
+        results = file_results + symbol_results
+
+        return self.rank_results(results)
+    
 
 
