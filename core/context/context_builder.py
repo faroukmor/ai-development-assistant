@@ -43,7 +43,7 @@ Relevant Files:
 {self.file_builder.build_file_context()}
 
 """
-        with open("context_test.txt", "w", encoding="utf-8") as file:
+        with open(r"debug\FINAL_CONTEXT.txt", "w", encoding="utf-8") as file:
             file.write(context)
 
         return context

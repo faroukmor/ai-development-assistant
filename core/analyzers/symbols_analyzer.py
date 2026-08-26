@@ -21,7 +21,7 @@ class SymbolAnalyzer:
         
 
     def detect_java_symbols(self,file):
-        pass
+        print("this program doesn`t support JAVA for now")
 
     def detect_symbols(self):
         for file in self.project.files:
