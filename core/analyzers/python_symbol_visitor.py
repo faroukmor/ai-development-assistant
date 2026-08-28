@@ -5,6 +5,7 @@ class PythonSymbolVisitor(ast.NodeVisitor):
         super().__init__()
         self.file = file
         self.current_parent = None
+        self.current_class = None
 
     def build_signature(self, node):
         args = [arg.arg for arg in node.args.args]
@@ -18,6 +19,8 @@ class PythonSymbolVisitor(ast.NodeVisitor):
                         end_line=node.end_lineno,
                         docstring=ast.get_docstring(node)
                         )
+        old_class = self.current_class
+        self.current_class = node.name
 
         if self.current_parent:
             sym.parent = self.current_parent
@@ -33,6 +36,7 @@ class PythonSymbolVisitor(ast.NodeVisitor):
 
         #رجعنا الاب القديم 
         self.current_parent = old_parent
+        self.current_class = old_class
 
     def get_callable_name(self, node):
         parts = []
@@ -43,11 +47,15 @@ class PythonSymbolVisitor(ast.NodeVisitor):
         elif isinstance(node, ast.Attribute):
             parts.append(node.attr)
             parts.append(self.get_callable_name(node.value))
+            
+            
             parts.reverse()
-
+            
             if None in parts:
                 return None
-
+            for i, part in enumerate(parts):
+                if part == "self":
+                    parts[i] = self.current_class
             return ".".join(parts)
 
         elif isinstance(node, ast.Call):
