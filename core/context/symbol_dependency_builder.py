@@ -8,5 +8,6 @@ class SymbolDependencyBuilder:
         search_results = []
         for call in symbol.calls:
             call = call.replace("()", "")
+            call = call.split(".")[-1]
             search_results += self.symbol_search.find_by_name(call)
         return search_results

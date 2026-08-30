@@ -20,7 +20,7 @@ class SymbolAnalyzer:
         visitor.visit(tree)
         
 
-    def detect_java_symbols(self,file):
+    def detect_java_symbols(self):
         print("this program doesn`t support JAVA for now")
 
     def detect_symbols(self):

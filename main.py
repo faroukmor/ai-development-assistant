@@ -28,7 +28,7 @@ while True:
     try:
         user_input = Prompt.ask("[bold green]You[/bold green]")
 
-        if user_input.lower() == "q":
+        if user_input.lower() == "q" or user_input == "ض":
             console.print("[dim]Goodbye.[/dim]")
             break
 

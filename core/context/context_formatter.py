@@ -20,5 +20,5 @@ class ProjectContextFormatter:
         for entry_point in self.project.entry_points:
             if not entry_point.content:
                 entry_point.read_content()
-            entry_points += entry_point.name+"\n"+"content:"+ entry_point.content+"\n"+"---------------------\n"
+            entry_points += entry_point.name + ":\n" + entry_point.content + "\n"
         return entry_points

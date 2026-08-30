@@ -13,35 +13,25 @@ class ProjectContextBuilder:
 
     
     def build_context(self):
-        context = f"""
-Project Name: {self.project.name}
-        
-Project Type: {self.project.type}
-        
+        context = f"""===Project===
+Name: {self.project.name}
+Type: {self.project.type}       
 Languages: 
-{self.formatter.build_languages()}
-                
-"""
+{self.formatter.build_languages()}"""
         
-
         if self.retrievers: 
             if self.project.readme and not self.project.readme.content:
                                 self.project.readme.read_content()
             context += f"""
-README: {self.project.readme.name}  
-content: 
+README: 
 {self.project.readme.content}    
-----------------------------
 
 Entry Points:
 {self.formatter.build_entry_points()}
-
 Dependencies: {self.formatter.build_dependencies()}
-
 Relevant Files:
-{self.symbol_builder.build_symbol_context()}
 {self.file_builder.build_file_context()}
-
+{self.symbol_builder.build_symbol_context()}
 """
         with open(r"debug\FINAL_CONTEXT.txt", "w", encoding="utf-8") as file:
             file.write(context)

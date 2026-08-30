@@ -34,3 +34,31 @@ Become the developer's second brain.
 Not another chatbot.
 
 An intelligent software engineering companion.
+
+# Final Goal
+
+## Core Pipeline
+
+text```
+
+Project
+   ↓
+Project Scanner
+   ↓
+Project Indexer
+   ↓
+Code Analysis
+   ↓
+Symbols + Calls + Relationships
+   ↓
+Retrieval
+   ↓
+Relevant Files & Symbols
+   ↓
+Dependency Resolution
+   ↓
+Context Construction
+   ↓
+LLM
+   ↓
+Codebase-Aware Answer
