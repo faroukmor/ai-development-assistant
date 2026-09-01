@@ -39,7 +39,7 @@ An intelligent software engineering companion.
 
 ## Core Pipeline
 
-text```
+```
 
 Project
    ↓
@@ -62,3 +62,7 @@ Context Construction
 LLM
    ↓
 Codebase-Aware Answer
+
+---
+
+The phase-by-phase execution plan lives in `docs/roadmap.md`.

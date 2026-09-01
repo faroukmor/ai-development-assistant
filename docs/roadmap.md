@@ -46,6 +46,8 @@
 
 ## Phase 3 — Symbol Dependency Graph
 
+- [ ] Exclude the caller itself from its call targets
+- [ ] Filter call targets by class hint from the full call chain
 - [ ] Make `SymbolDependencyBuilder` resolve calls reliably
 - [ ] Distinguish project symbols from external/library calls
 - [ ] Handle `Class.method()` correctly
@@ -67,7 +69,8 @@
 - [ ] Design final context hierarchy
 - [ ] Separate primary symbols from dependency symbols
 - [ ] Mark dependency depth
-- [ ] Prevent the same symbol from appearing multiple times
+- [x] Prevent the same symbol from appearing multiple times
+- [ ] Deduplicate method source included inside its containing class source
 - [ ] Prioritize relevant symbols
 - [ ] Limit context size
 - [ ] Add source truncation for large symbols
@@ -173,9 +176,9 @@
 
 ## Current Priority
 
-1. Complete `SymbolDependencyBuilder`
-2. Implement recursive dependency resolution
-3. Prevent duplicate symbols
+1. Exclude the caller itself from its call targets
+2. Filter call targets by class hint from the full call chain
+3. Implement recursive dependency resolution
 4. Prevent dependency cycles
 5. Define maximum dependency depth
 6. Finalize the context structure
