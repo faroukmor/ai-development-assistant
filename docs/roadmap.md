@@ -46,8 +46,8 @@
 
 ## Phase 3 — Symbol Dependency Graph
 
-- [ ] Exclude the caller itself from its call targets
-- [ ] Filter call targets by class hint from the full call chain
+- [x] Exclude the caller itself from its call targets
+- [x] Filter call targets by class hint from the full call chain
 - [ ] Make `SymbolDependencyBuilder` resolve calls reliably
 - [ ] Distinguish project symbols from external/library calls
 - [ ] Handle `Class.method()` correctly
@@ -101,6 +101,7 @@
 - [x] Create system prompt
 - [x] Force context-only answers
 - [x] Prevent unsupported claims
+- [x] Evaluate and select the best local model
 - [ ] Improve system prompt
 - [ ] Improve answer formatting
 - [ ] Reduce unnecessary verbosity
@@ -176,13 +177,12 @@
 
 ## Current Priority
 
-1. Exclude the caller itself from its call targets
-2. Filter call targets by class hint from the full call chain
-3. Implement recursive dependency resolution
-4. Prevent dependency cycles
-5. Define maximum dependency depth
-6. Finalize the context structure
-7. Test context quality
-8. Improve retrieval
-9. Add semantic/embedding search
-10. Improve project-wide reasoning
+1. [x] Filter call targets by class hint from the full call chain
+2. Implement recursive dependency resolution
+3. Prevent dependency cycles
+4. Define maximum dependency depth
+5. Finalize the context structure
+6. Test context quality
+7. Improve retrieval
+8. Add semantic/embedding search
+9. Improve project-wide reasoning

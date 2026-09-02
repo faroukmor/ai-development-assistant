@@ -46,7 +46,6 @@ Use it as your only source of truth.
                         "content": user_prompt
                     }
                 ]
-        exit
-        model = llm_client.LLMClient('qwen2.5:3b')
+        model = llm_client.LLMClient('qwen2.5-coder:3b')
         response = model.ask(messages)
         return response

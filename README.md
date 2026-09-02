@@ -45,14 +45,14 @@ core/
 ## Requirements
 
 - Python 3.10 or newer
-- Ollama running locally with a model (default: `qwen2.5:3b`)
+- Ollama running locally with a model (default: `qwen2.5-coder:3b`)
 - Python packages: `ollama`, `rich`
 
 ## Run
 
 ```
 pip install ollama rich
-ollama pull qwen2.5:3b
+ollama pull qwen2.5-coder:3b
 python main.py
 ```
 
