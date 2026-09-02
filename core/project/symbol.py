@@ -9,4 +9,5 @@ class Symbol:
         self.signature = signature
         self.docstring = docstring
         self.calls = []
+        self.variable_bindings = {}
 

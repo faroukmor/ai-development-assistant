@@ -120,3 +120,20 @@ class PythonSymbolVisitor(ast.NodeVisitor):
         self.generic_visit(node)
         self.current_parent = old_parent
 
+    def visit_Assign(self, node):
+        if self.current_parent is None:
+            self.generic_visit(node)
+            return
+
+        if isinstance(node.value, ast.Call) and isinstance(node.targets[0], ast.Name):
+
+            variable = node.targets[0].id
+
+            call_name = self.get_callable_name(node.value)
+            if call_name is not None:
+                class_name = call_name.replace("()", "").split(".")[-1]
+
+                self.current_parent.variable_bindings[variable] = class_name
+
+        self.generic_visit(node)
+
