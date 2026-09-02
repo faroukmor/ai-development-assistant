@@ -33,7 +33,7 @@ class SymbolContextBuilder:
             already_called_symbols.add(current_symbol)
 
         called_symbols = ""
-        results = self.dependency_builder.find_call_symbols(symbol)
+        results = self.dependency_builder.find_call_symbols(symbol, file)
 
         i = 1
         for result in results:
