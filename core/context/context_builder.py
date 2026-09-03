@@ -28,7 +28,7 @@ README:
 
 Entry Points:
 {self.formatter.build_entry_points()}
-Dependencies: {self.formatter.build_dependencies()}
+{self.formatter.build_dependencies()}
 Relevant Files:
 {self.file_builder.build_file_context()}
 {self.symbol_builder.build_symbol_context()}

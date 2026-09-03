@@ -3,7 +3,7 @@ class FileContextBuilder:
         self.project = project
         self.retrievers = retrievers
     def build_file_context(self):
-        file_context = "==File=="
+        file_context = ""
         for retriever in self.retrievers:
             if not retriever.symbol:
                 if not retriever.file.content:

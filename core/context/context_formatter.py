@@ -10,10 +10,9 @@ class ProjectContextFormatter:
         return languages
 
     def build_dependencies(self):
-        dependencies = ""
-        for dependencie in self.project.dependencies:
-            dependencies += dependencie + "\n"
-        return dependencies
+        if not self.project.dependencies:
+            return ""
+        return "Dependencies:\n" + "\n".join(self.project.dependencies) + "\n"
 
     def build_entry_points(self):
         entry_points = ""
