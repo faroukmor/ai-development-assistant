@@ -53,14 +53,7 @@
 - [ ] Handle `Class.method()` correctly
 - [ ] Handle `self.method()` correctly
 - [ ] Handle nested classes/functions correctly
-- [ ] Prevent dependency cycles
-- [ ] Prevent repeated dependency expansion
-- [ ] Define maximum dependency depth
-- [ ] Implement recursive dependency expansion
 - [ ] Test `A → B`
-- [ ] Test `A → B → C`
-- [ ] Test `A → B → C → D`
-- [ ] Test circular dependencies
 
 ---
 
@@ -120,7 +113,7 @@
 - [ ] Add recursive dependency tests
 - [ ] Add duplicate dependency tests
 - [ ] Add `SymbolContextBuilder` tests
-- [ ] Add context formatting tests
+- [x] Add context formatting tests
 - [ ] Add retrieval tests
 - [ ] Add end-to-end assistant tests
 - [ ] Create a benchmark of project questions
@@ -177,12 +170,26 @@
 
 ## Current Priority
 
-1. [x] Filter call targets by class hint from the full call chain
-2. Implement recursive dependency resolution
-3. Prevent dependency cycles
-4. Define maximum dependency depth
-5. Finalize the context structure
-6. Test context quality
-7. Improve retrieval
-8. Add semantic/embedding search
-9. Improve project-wide reasoning
+1. [x] Clean context output — remove dangling `==File==` header and empty `Dependencies:` line
+2. [ ] Fix crash when the project has no README (`build_context` dereferences `readme.content` on `None` — found by `tests/test_context_output.py`)
+3. [ ] Deduplicate method source included inside its containing class source
+4. [ ] Build a reference question benchmark
+5. [ ] Test context quality with real project questions
+6. [ ] Improve retrieval quality
+
+---
+
+## Deferred
+
+Moved here on 2026-09-03: no real question has failed because of missing
+transitive context yet, and recursive expansion multiplies context size
+before the current context quality is proven. The roadmap is a record,
+not a boss — revisit when a real question shows missing `A → B → C` context.
+
+- [ ] Implement recursive dependency expansion
+- [ ] Prevent repeated dependency expansion
+- [ ] Prevent dependency cycles
+- [ ] Define maximum dependency depth
+- [ ] Test `A → B → C`
+- [ ] Test `A → B → C → D`
+- [ ] Test circular dependencies
