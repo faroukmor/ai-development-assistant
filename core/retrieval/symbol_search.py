@@ -13,10 +13,9 @@ class SymbolSearch:
                 if symbol.name.lower() in question_words:
                     search_results.append(SR.SearchResult(
                                                     file=file,
-                                                    score=80,
+                                                    score=SR.SYMBOL_MATCH,
                                                     reason="Matched symbol",
                                                     symbol=symbol))
-                    break
         return search_results
     def find_by_name(self,name):
         search_results = []
@@ -26,8 +25,8 @@ class SymbolSearch:
                 if symbol.name.lower() == name:
                     search_results.append(SR.SearchResult(
                                                   file=file,
-                                                  score=999,
+                                                  score=SR.DIRECT_LOOKUP,
                                                   reason="find_by_name",
                                                   symbol=symbol))
-                    break
+                    
         return search_results

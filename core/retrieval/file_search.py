@@ -21,7 +21,7 @@ class FileSearch:
                 result.append(
                     SR.SearchResult(
                         file=file,
-                        score=40,
+                        score=SR.FILENAME_MATCH,
                         reason="Matched filename"
                     )
                 )

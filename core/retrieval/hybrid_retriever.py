@@ -11,10 +11,11 @@ class HybridRetriever:
             key = result.file.path
 
             if key in merged:
-                merged[key].score += result.score
-
-                if result.symbol and not merged[key].symbol:
-                    merged[key].symbol = result.symbol
+                if result.score > merged[key].score:
+                    result.symbol = result.symbol or merged[key].symbol
+                    merged[key] = result
+                else:
+                    merged[key].symbol = merged[key].symbol or result.symbol
             else:
                 merged[key] = result
 
