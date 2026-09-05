@@ -21,7 +21,7 @@ class ProjectIndexer:
         self.project.is_indexed = True
 
     def build(self):
-        PL.ProjectLoader(self.project).load_files()
+        PL.ProjectLoader().load_files(self.project)
         self.index_files()
         AP.ProjectAnalyzer(self.project).analyze()
     
