@@ -19,7 +19,7 @@ def read(file_path):
 
 """
 path = r"C:\\Users\\HP\\Documents\\PYTHON Project\\ai-development-assistant"
-files = prs.scan_project(path)
+files = prs.walk_paths(path)
 
 file = pf.ProjectFile(files[3])
 print(file.path)
