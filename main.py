@@ -7,6 +7,7 @@ from rich.prompt import Prompt
 
 console = Console()
 
+User_path = Prompt.ask("[bold blue]Project Path[/bold blue]")
 project_path = r"C:\Users\HP\Documents\PYTHON Project\ai-development-assistant"
 
 assistant = ai.AIDevelopmentAssistant(project_path)
