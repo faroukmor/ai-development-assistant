@@ -6,7 +6,6 @@ class ProjectContextBuilder:
     def __init__(self,project,retrievers):
         self.project = project
         self.retrievers = retrievers
-
         self.formatter = ProjectContextFormatter(project)
         self.file_builder = FileContextBuilder(project, retrievers)
         self.symbol_builder = SymbolContextBuilder(project, retrievers)

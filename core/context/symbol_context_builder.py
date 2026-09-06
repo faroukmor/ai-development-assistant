@@ -5,36 +5,25 @@ class SymbolContextBuilder:
         self.retrievers = retrievers
         self.dependency_builder = SDB.SymbolDependencyBuilder(self.project)
 
-        
     def get_symbol_source(self, symbol, file):
         if not file.content:
             file.read_content()
-    
         lines = file.content.splitlines()
-    
-        return "\n".join(
-            lines[symbol.line - 1:symbol.end_line]
-        )
+        return "\n".join(lines[symbol.line - 1:symbol.end_line])
     
     def get_symbol_calls(self, symbol):
-        return "\n".join(
-            f"- {call}"
-            for call in symbol.calls
-        )
+        return "\n".join(f"- {call}" for call in symbol.calls)
         
     def format_symbol(self, symbol, file, rendered_identities, score=None, reason=None):
         symbol_source = self.get_symbol_source(symbol, file)
         symbol_calls = self.get_symbol_calls(symbol)
-        
         symbol_identity = self.dependency_builder.get_symbol_identity(symbol, file)
         if symbol_identity in rendered_identities:
             return ""
         else:
             rendered_identities.add(symbol_identity)
-
         called_symbols_text = ""
         call_results = self.dependency_builder.find_call_symbols(symbol, file)
-
         i = 1
         for call_result in call_results:
             call_identity = self.dependency_builder.get_symbol_identity(call_result.symbol, call_result.file)
