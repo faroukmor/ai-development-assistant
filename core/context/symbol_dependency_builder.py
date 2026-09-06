@@ -10,28 +10,29 @@ class SymbolDependencyBuilder:
                     self.class_names.add(symbol.name)
 
     def get_symbol_identity(self,symbol,file):
+        # unique identity across the project, in the form file:name:parent
         parent = symbol.parent.name if symbol.parent != None else ""
         return f"""{file.name}:{symbol.name}:{parent}"""
     
+    def parse_call(self, call, symbol):
+        parts = call.replace("()", "").split(".")
+        if len(parts) >= 2 and parts[-2] in symbol.variable_bindings:
+            parts[-2] = symbol.variable_bindings[parts[-2]]
+        return parts
+
+    def filter_matches(self, matches, parts, caller_identity):
+        owner = parts[-2] if len(parts) >= 2 else None
+        if owner in self.class_names:
+            return [match for match in matches if match.symbol.parent.name == owner]
+        return [match for match in matches
+                if self.get_symbol_identity(match.symbol, match.file) != caller_identity]
+
     def find_call_symbols(self, symbol, file):
-        symbol_identity = self.get_symbol_identity(symbol,file)
+        caller_identity = self.get_symbol_identity(symbol, file)
         call_results = []
         for call in symbol.calls:
-            call_parts = call.replace("()", "").split(".")
-            if len(call_parts) >= 2 and call_parts[-2] in symbol.variable_bindings:
-                call_parts[-2] = symbol.variable_bindings[call_parts[-2]]
-                    
-            matches = self.symbol_search.find_by_name(call_parts[-1])
-            if len(call_parts) >= 2 and call_parts[-2] in self.class_names:
-                for call_result in matches:
-                    if call_result.symbol.parent.name == call_parts[-2]:
-                        call_results.append(call_result)
-            else:
-                for call_result in matches:
-                    result_identity = self.get_symbol_identity(call_result.symbol,call_result.file)
-                    if result_identity == symbol_identity:
-                        continue
-                    else:
-                        call_results.append(call_result) 
+            parts = self.parse_call(call, symbol)
+            matches = self.symbol_search.find_by_name(parts[-1])
+            call_results.extend(self.filter_matches(matches, parts, caller_identity))
         return call_results
     
