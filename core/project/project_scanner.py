@@ -1,7 +1,6 @@
 import os
 
-# Dotted entries (.git, .idea, .vscode, .gitignore, ...) are already skipped
-# by the startswith(".") check below; these are the non-dotted ones.
+
 IGNORED = {"__pycache__", "venv"}
 
 

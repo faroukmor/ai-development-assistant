@@ -14,5 +14,3 @@ class EntryPointAnalyzer:
         self.project.entry_points = []
         for file in self.project.files:
             if file.name in ENTRY_POINT_NAMES: self.project.entry_points.append(file)
-
-        return self.project.entry_points

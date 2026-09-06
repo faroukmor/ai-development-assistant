@@ -7,6 +7,17 @@ class PythonSymbolVisitor(ast.NodeVisitor):
         self.current_parent = None
         self.current_class = None
 
+    def analyze(self):
+        with open(self.file.path, "r", encoding="utf-8") as f:
+            source = f.read()
+
+        try:
+            tree = ast.parse(source)
+        except SyntaxError:
+            return
+
+        self.visit(tree)
+
     def build_signature(self, node):
         args = [arg.arg for arg in node.args.args]
         return f"{node.name}({', '.join(args)})"
