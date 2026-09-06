@@ -1,4 +1,3 @@
-import core.project.project as P
 import core.assistant.ai_assistant as ai
 
 from rich.console import Console
@@ -10,8 +9,7 @@ console = Console()
 
 project_path = r"C:\Users\HP\Documents\PYTHON Project\ai-development-assistant"
 
-project = P.Project(project_path)
-assistant = ai.AIDevelopmentAssistant(project)
+assistant = ai.AIDevelopmentAssistant(project_path)
 
 
 console.print(

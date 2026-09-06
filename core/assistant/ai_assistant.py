@@ -1,16 +1,18 @@
 import core.context.context_builder as PCB
 import core.llm.llm_client as llm_client
 import core.project.project_indexer as PI
+import core.project.project as P
 import core.retrieval.hybrid_retriever as HR
 class AIDevelopmentAssistant:
-    def __init__(self,project):
-        self.project = project
+    def __init__(self,project_path):
+        self.project = P.Project(project_path)
 
     def ask(self,user_prompt):
         PI.ProjectIndexer(self.project).build()
         
         retriever = HR.HybridRetriever(self.project)
 
+        #results of every search 
         retrievers = retriever.search(user_prompt)
         
         context = PCB.ProjectContextBuilder(self.project,retrievers).build_context()
