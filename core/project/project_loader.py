@@ -9,5 +9,5 @@ class ProjectLoader:
         if project.files is not None:
             return
         files, _ = ps.walk_paths(project.path)
-        project.files = pf.files_to_objects(files)
+        project.files = [pf.ProjectFile(path) for path in files]
     

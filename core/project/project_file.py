@@ -31,13 +31,5 @@ class ProjectFile:
         self.symbols = []
 
     def read_content(self):
-        self.content = fr.read(self.path)
-
-
-def files_to_objects(files_list):
-    files_obj = []
-    for file in files_list:
-        files_obj.append(ProjectFile(file))
-        
-    return files_obj
+        self.content = fr.read_file(self.path)
 
