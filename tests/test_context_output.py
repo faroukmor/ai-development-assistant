@@ -58,6 +58,8 @@ def run_checks():
         "dangling '==File==' header must be gone when no file section is rendered"
     assert "Relevant Files:" in context, \
         "Relevant Files section must always be present when retrievers exist"
+    assert "README:" in context and "# Test Project" in context, \
+        "readme content must appear in the context when a readme exists"
 
     print("ALL CONTEXT OUTPUT CHECKS PASSED")
 

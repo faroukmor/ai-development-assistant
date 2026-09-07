@@ -171,7 +171,7 @@
 ## Current Priority
 
 1. [x] Clean context output — remove dangling `==File==` header and empty `Dependencies:` line
-2. [ ] Fix crash when the project has no README (`build_context` dereferences `readme.content` on `None` — found by `tests/test_context_output.py`)
+2. [x] Fix crash when the project has no README (`build_context` dereferences `readme.content` on `None` — found by `tests/test_context_output.py`)
 3. [ ] Deduplicate method source included inside its containing class source
 4. [ ] Build a reference question benchmark
 5. [ ] Test context quality with real project questions

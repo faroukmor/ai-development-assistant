@@ -18,12 +18,16 @@ Type: {self.project.type}
 Languages: 
 {self.formatter.build_languages()}"""
         
-        if self.retrievers: 
-            if self.project.readme and not self.project.readme.content:
-                                self.project.readme.read_content()
+        if self.retrievers:
+            if self.project.readme:
+                if not self.project.readme.content:
+                    self.project.readme.read_content()
+                readme_text = self.project.readme.content
+            else:
+                readme_text = ""
             context += f"""
 README: 
-{self.project.readme.content}    
+{readme_text}    
 
 Entry Points:
 {self.formatter.build_entry_points()}
