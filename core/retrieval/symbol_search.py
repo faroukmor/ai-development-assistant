@@ -1,4 +1,5 @@
 import core.retrieval.search_result as SR
+from core.retrieval.tokenizer import tokenize, match_tokens
 
 class SymbolSearch:
     def __init__(self, project):
@@ -6,11 +7,11 @@ class SymbolSearch:
 
     def search(self, question):
         search_results = []
-        question_words = question.lower().replace("?", "").split()
+        question_tokens = tokenize(question)
 
         for file in self.project.files:
             for symbol in file.symbols:
-                if symbol.name.lower() in question_words:
+                if match_tokens(tokenize(symbol.name), question_tokens):
                     search_results.append(SR.SearchResult(
                                                     file=file,
                                                     score=SR.SYMBOL_MATCH,
