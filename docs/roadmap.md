@@ -77,9 +77,9 @@
 - [ ] Improve filename matching
 - [ ] Improve symbol-name matching
 - [ ] Improve query tokenization
-- [ ] Handle `snake_case`
-- [ ] Handle `CamelCase`
-- [ ] Handle dotted names
+- [x] Handle `snake_case`
+- [x] Handle `CamelCase`
+- [x] Handle dotted names
 - [ ] Improve file/symbol scoring
 - [ ] Improve result ranking
 - [ ] Add semantic/embedding search
