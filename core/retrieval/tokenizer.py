@@ -7,12 +7,29 @@ STOPWORDS = {"a", "an", "the", "is", "are", "do", "does", "how",
              "what", "where", "when", "why", "which", "we", "i",
              "my", "to", "in", "of", "and", "or", "for", "on", "with"}
 
+STEM_MAP = {
+    "built": "build",
+    "files": "file",
+    "classes": "class",
+    "tests": "test",
+    "functions": "function",
+    "methods": "method",
+    "matches": "match",
+    "loads": "load",
+    "reads": "read",
+    "calls": "call",
+}
+
+
+def stem(token):
+    return STEM_MAP.get(token, token)
+
 
 def tokenize(text):
     tokens = []
     for word in WORD_RE.findall(text):
         tokens.extend(CASE_SPLIT_RE.findall(word))
-    tokens = [token.lower() for token in tokens]
+    tokens = [stem(token.lower()) for token in tokens]
     return [token for token in tokens if token not in STOPWORDS]
 
 

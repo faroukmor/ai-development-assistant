@@ -80,6 +80,7 @@
 - [x] Handle `snake_case`
 - [x] Handle `CamelCase`
 - [x] Handle dotted names
+- [x] Handle simple inflections (`built→build`, `files→file`)
 - [ ] Improve file/symbol scoring
 - [ ] Improve result ranking
 - [ ] Add semantic/embedding search
