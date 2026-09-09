@@ -81,11 +81,10 @@
 - [x] Handle `CamelCase`
 - [x] Handle dotted names
 - [x] Handle simple inflections (`built→build`, `files→file`)
+- [x] Add semantic/embedding search (batch `/api/embed` — 115 symbols in ~7s)
+- [x] Integrate embedding search into `HybridRetriever`
 - [ ] Improve file/symbol scoring
 - [ ] Improve result ranking
-- [ ] Add semantic/embedding search
-- [ ] Compare keyword retrieval with embedding retrieval
-- [ ] Integrate embedding search into `HybridRetriever`
 
 ---
 
