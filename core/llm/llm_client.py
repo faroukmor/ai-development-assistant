@@ -10,7 +10,8 @@ class LLMClient:
                 messages=messages,
                 options={
                     "temperature": 0,
-                    "num_predict": 1024
+                    "num_predict": 1024,
+                    "num_ctx": 32768
                 }
             )
         except ollama.ResponseError as e:
