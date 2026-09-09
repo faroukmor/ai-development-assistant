@@ -19,7 +19,7 @@ Code Analysis (AST)
    ↓
 Symbols + Calls + Relationships
    ↓
-Retrieval (File Search + Symbol Search)
+Retrieval (File Search + Symbol Search + Semantic Embedding Search)
    ↓
 Dependency Resolution
    ↓
@@ -36,7 +36,7 @@ Codebase-Aware Answer
 core/
 ├── project/     Scanning, loading, indexing, file and symbol models
 ├── analyzers/   AST analysis: project type, entry points, symbols, calls
-├── retrieval/   File search, symbol search, hybrid retriever
+├── retrieval/   Keyword search, semantic embedding search, hybrid ranking
 ├── context/     Context builders: files, symbols, dependencies
 ├── llm/         Ollama client
 └── assistant/   Top-level orchestrator: ask → answer
@@ -59,7 +59,9 @@ ollama pull nomic-embed-text
 python main.py
 ```
 
-Note: the project path to analyze is set at the top of `main.py` (`project_path`).
+Note: on launch the assistant asks for a project path — press Enter to
+analyze the default project (`DEFAULT_PROJECT_PATH` at the top of `main.py`),
+or type any other project path.
 
 Type a question about the analyzed project and press Enter. Type `q` to quit.
 

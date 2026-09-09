@@ -5,10 +5,14 @@ from rich.panel import Panel
 from rich.markdown import Markdown
 from rich.prompt import Prompt
 
+
+DEFAULT_PROJECT_PATH = r"C:\Users\HP\Documents\PYTHON Project\ai-development-assistant"
+
 console = Console()
 
-User_path = Prompt.ask("[bold blue]Project Path[/bold blue]")
-project_path = r"C:\Users\HP\Documents\PYTHON Project\ai-development-assistant"
+user_path = Prompt.ask("[bold blue]Project Path[/bold blue] [dim](Enter for default)[/dim]")
+
+project_path = user_path.strip() or DEFAULT_PROJECT_PATH
 
 assistant = ai.AIDevelopmentAssistant(project_path)
 

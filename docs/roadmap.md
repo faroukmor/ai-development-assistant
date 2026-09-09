@@ -127,7 +127,7 @@
 - [ ] Add readable sections
 - [ ] Add syntax highlighting
 - [ ] Add loading/progress indicators
-- [ ] Accept project path from the user
+- [x] Accept project path from the user (interactive prompt, Enter = default)
 - [ ] Add `/files` command
 - [ ] Add `/symbols` command
 - [ ] Add `/context` command
@@ -173,8 +173,8 @@
 1. [x] Clean context output — remove dangling `==File==` header and empty `Dependencies:` line
 2. [x] Fix crash when the project has no README (`build_context` dereferences `readme.content` on `None` — found by `tests/test_context_output.py`)
 3. [ ] Deduplicate method source included inside its containing class source
-4. [ ] Build a reference question benchmark
-5. [ ] Test context quality with real project questions
+4. [x] Build a reference question benchmark (tests/retrieval_benchmark.py — 10/10)
+5. [x] Test context quality with real project questions
 6. [ ] Improve retrieval quality
 
 ---
