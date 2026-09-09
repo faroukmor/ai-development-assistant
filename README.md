@@ -45,14 +45,17 @@ core/
 ## Requirements
 
 - Python 3.10 or newer
-- Ollama running locally with a model (default: `qwen2.5-coder:3b`)
-- Python packages: `ollama`, `rich`
+- Ollama running locally with:
+  - a chat model (default: `qwen2.5-coder:1.5b`)
+  - an embedding model: `nomic-embed-text`
+- Python packages: `ollama`, `rich`, `numpy`
 
 ## Run
 
 ```
-pip install ollama rich
-ollama pull qwen2.5-coder:3b
+pip install ollama rich numpy
+ollama pull qwen2.5-coder:1.5b
+ollama pull nomic-embed-text
 python main.py
 ```
 

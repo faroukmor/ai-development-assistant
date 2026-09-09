@@ -56,7 +56,7 @@ class EmbeddingSearch:
 
         try:
             req = urllib.request.Request(EMBED_URL, data=data, headers={'Content-Type': 'application/json'})
-            with urllib.request.urlopen(req) as response:
+            with urllib.request.urlopen(req, timeout=60) as response:
                 result = json.loads(response.read().decode('utf-8'))
 
                 return [np.array(embedding) for embedding in result["embeddings"]]
