@@ -50,7 +50,11 @@ Use it as your only source of truth.
                     },
                     {
                         "role": "user",
-                        "content": user_prompt
+                        "content": user_prompt + (
+                            "\n\n(Answer using ONLY the project context above. "
+                            "If it does not cover this question, say: "
+                            "\"I don't have enough information from the current project context.\")"
+                        )
                     }
                 ]
         model = llm_client.LLMClient('qwen2.5-coder:1.5b')
