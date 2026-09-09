@@ -3,14 +3,19 @@ import core.llm.llm_client as llm_client
 import core.project.project_indexer as PI
 import core.project.project as P
 import core.retrieval.hybrid_retriever as HR
+import core.retrieval.embedding_search as ES
 class AIDevelopmentAssistant:
     def __init__(self,project_path):
         self.project = P.Project(project_path)
-
+        self.embedding_search = None 
     def ask(self,user_prompt):
         PI.ProjectIndexer(self.project).build()
-        
-        retriever = HR.HybridRetriever(self.project)
+
+        if self.embedding_search is None:
+            self.embedding_search = ES.EmbeddingSearch(self.project)
+            self.embedding_search.build_index()
+
+        retriever = HR.HybridRetriever(self.project, self.embedding_search)
 
         #results of every search 
         retrievers = retriever.search(user_prompt)

@@ -3,8 +3,9 @@ import core.retrieval.symbol_search as SS
 import core.project.project as P
 from core.retrieval.tokenizer import tokenize
 class HybridRetriever:
-    def __init__(self,project):
+    def __init__(self, project, embedding_search=None):
         self.project = project
+        self.embedding_search = embedding_search
 
     def rank_results(self, results):
         merged = {}
@@ -42,7 +43,8 @@ class HybridRetriever:
     def search(self,question):
         results = []
         results += FS.FileSearch(self.project).search(question)
-        results += SS.SymbolSearch(self.project).search(question)        
-        #results += EmbeddingSearch(self.project).search(question)
+        results += SS.SymbolSearch(self.project).search(question)
+        if self.embedding_search:
+            results += self.embedding_search.search(question)
         return self.rank_results(results)
     
