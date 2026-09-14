@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core.project.project import Project
 from core.project.project_indexer import ProjectIndexer
 from core.retrieval.hybrid_retriever import HybridRetriever
-from tests.retrieval_benchmark import RETRIEVAL_BENCHMARK
+from tests.retrieval_benchmark import RETRIEVAL_BENCHMARK, SEMANTIC_BENCHMARK
 
 PROJECT_PATH = r"C:\Users\HP\Documents\PYTHON Project\ai-development-assistant"
 
@@ -15,15 +15,11 @@ def hits_as_pairs(results):
     return [(r.file.name, r.symbol.name if r.symbol else None) for r in results]
 
 
-def run_benchmark():
-    project = Project(PROJECT_PATH)
-    ProjectIndexer(project).build()
-    retriever = HybridRetriever(project)
-
+def run_suite(retriever, cases):
     passed = 0
     failed = []
 
-    for case in RETRIEVAL_BENCHMARK:
+    for case in cases:
         results = retriever.search(case["question"])
         hits = hits_as_pairs(results)
 
@@ -58,10 +54,25 @@ def run_benchmark():
             print(f"PASS  {case['question']}  ({len(hits)} hits)")
 
     print()
-    print(f"BENCHMARK: {passed}/{len(RETRIEVAL_BENCHMARK)} passed")
+    print(f"BENCHMARK: {passed}/{len(cases)} passed")
     return failed
 
 
+def build_retriever(with_semantic):
+    project = Project(PROJECT_PATH)
+    ProjectIndexer(project).build()
+
+    embedding_search = None
+    if with_semantic:
+        from core.retrieval.embedding_search import EmbeddingSearch
+        embedding_search = EmbeddingSearch(project)
+        embedding_search.build_index()
+
+    return HybridRetriever(project, embedding_search)
+
+
 if __name__ == "__main__":
-    failures = run_benchmark()
+    semantic = "--semantic" in sys.argv
+    cases = SEMANTIC_BENCHMARK if semantic else RETRIEVAL_BENCHMARK
+    failures = run_suite(build_retriever(semantic), cases)
     sys.exit(1 if failures else 0)
