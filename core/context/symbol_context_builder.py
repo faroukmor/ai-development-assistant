@@ -29,6 +29,12 @@ class SymbolContextBuilder:
             call_identity = self.dependency_builder.get_symbol_identity(call_result.symbol, call_result.file)
             if call_identity in rendered_identities: 
                 continue
+            parent = call_result.symbol.parent
+            if parent is not None:
+                parent_identity = self.dependency_builder.get_symbol_identity(parent, call_result.file)
+                if parent_identity in rendered_identities:
+                    rendered_identities.add(call_identity)
+                    continue
             called_symbols_text += f"""{i}. {call_result.symbol.name}
 Type: {call_result.symbol.type}
 File: {call_result.file.name}
