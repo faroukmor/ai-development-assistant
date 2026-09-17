@@ -6,13 +6,13 @@ class LLMClient:
     def ask(self,messages):
         try:
             response = ollama.chat(
-                model=self.model_name,
+                model   =self.model_name,
                 messages=messages,
-                options={
+                options ={
                     "temperature": 0,
                     "num_predict": 1024,
                     "num_ctx": 32768
-                }
+                    }
             )
         except ollama.ResponseError as e:
             if e.status_code == 404:

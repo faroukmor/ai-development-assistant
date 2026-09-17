@@ -53,9 +53,11 @@
 - [x] Model evaluation: `1.5b` default (fast), `3b` for depth
 
 ### Testing & tooling
-- [x] `PythonSymbolVisitor`, call extraction, nested-structure tests
-- [x] Context formatting tests; end-to-end context check
-- [x] Keyword + semantic retrieval benchmarks; context token counter
+- [x] Context formatting tests (`tests/test_context_output.py`) — passing
+- [x] Keyword benchmark 10/10 (`python -m tests.run_benchmark`) — re-verified 2026-09-17
+- [x] Semantic suite 2/2 (`python -m tests.run_benchmark --semantic`) — re-verified 2026-09-17
+- [x] Context token counter (`tests/token_counter.py`)
+- [x] `PythonSymbolVisitor` / call extraction / nested structures verified by scratch probes — probes deleted 2026-09-17, no committed test remains
 
 ### CLI
 - [x] Basic CLI with panels and markdown rendering
@@ -92,6 +94,7 @@ Every documented failure in the benchmark becomes a passing case.
 - [ ] Multilingual questions: one explicit decision — defer in writing, or adopt a cross-lingual embedding model
 - [ ] Handle nested classes/functions correctly in dependency resolution
 - [ ] Unit tests for `SymbolDependencyBuilder` and `SymbolContextBuilder` accuracy
+- [ ] Promote the deleted scratch probes into committed tests: `PythonSymbolVisitor` call extraction, nested structures, and the end-to-end context check (`tests/tmp/e2e_context_check.py` is untracked)
 
 ---
 
