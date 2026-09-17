@@ -1,181 +1,133 @@
 # AI Development Assistant — Roadmap
 
-## Phase 1 — Codebase Analysis
+> Rule: no goal without a real failing case or a real user need.
+> The benchmark is the referee — every fix must be measurable through it.
 
-- [x] Scan project files
-- [x] Detect project type
-- [x] Detect programming languages
-- [x] Detect entry points
-- [x] Detect dependencies
-- [x] Parse Python files using `ast`
-- [x] Detect classes
-- [x] Detect functions
-- [x] Detect nested classes/functions
-- [x] Extract function signatures
-- [x] Extract docstrings
-- [x] Extract parent/child relationships
-- [x] Extract function/method calls
-- [x] Improve callable-name extraction
-- [x] Create `SymbolSearch`
-- [x] Create `FileSearch`
-- [x] Create `HybridRetriever`
+## Achievements — shipped in v0.1 (tag: v0.1)
+
+### Analysis & indexing
+- [x] Scan project files; detect project type, languages, entry points, dependencies
+- [x] Parse Python files with `ast`: classes, functions, nested structures
+- [x] Extract signatures, docstrings, parent/child relations, calls
+- [x] Hardened scanner (`walk_paths` returns files + directories as a pair)
+
+### Retrieval → context
+- [x] Separated builders: `ProjectContextBuilder`, `ProjectContextFormatter`, `FileContextBuilder`, `SymbolContextBuilder`, `SymbolDependencyBuilder`
+- [x] Relevant files + symbols retrieved; exact source and metadata in the context
+- [x] Calls resolved to target symbols with their source
+- [x] Stable context format (`===Project===` / `===SYMBOL===` / Relevant Files)
+- [x] Dangling headers cleaned; no-README crash fixed; context repetition reduced
 
 ---
 
-## Phase 2 — Retrieval → Context
-
-- [x] Separate context responsibilities
-  - [x] `ProjectContextBuilder`
-  - [x] `ProjectContextFormatter`
-  - [x] `FileContextBuilder`
-  - [x] `SymbolContextBuilder`
-  - [x] `SymbolDependencyBuilder`
-- [x] Retrieve relevant files
-- [x] Retrieve relevant symbols
-- [x] Extract exact symbol source
-- [x] Add symbol metadata to context
-- [x] Add direct calls to context
-- [x] Resolve calls → target symbols
-- [x] Add target symbol source to context
-- [x] Remove obvious duplicate called symbols
-- [ ] Clean and standardize context structure
-- [ ] Reduce unnecessary context repetition
-- [ ] Define a stable context format
-
----
-
-## Phase 3 — Symbol Dependency Graph
-
-- [x] Exclude the caller itself from its call targets
+### Dependency resolution
+- [x] Exclude the caller from its own call targets
 - [x] Filter call targets by class hint from the full call chain
-- [ ] Make `SymbolDependencyBuilder` resolve calls reliably
-- [ ] Distinguish project symbols from external/library calls
-- [ ] Handle `Class.method()` correctly
-- [ ] Handle `self.method()` correctly
-- [ ] Handle nested classes/functions correctly
-- [ ] Test `A → B`
+- [x] `Class.method()` and `self.method()` resolved via variable bindings
+- [x] Reliable resolution — verified through the retrieval benchmark
+- [x] Same symbol never rendered twice; caller excluded from its targets
+- [x] Method source skipped when its parent class is already rendered
+
+### Context quality
+- [x] Stable hierarchy: project header → primary symbols → called symbols
+- [x] Relevant symbols prioritized (merge by max score, deterministic order)
+- [x] Context quality tested with real project questions
+
+### Retrieval quality
+- [x] Tokenizer: `snake_case`, `CamelCase`, dotted names, stopwords
+- [x] Small stem map (`built→build`, `files→file`, `reads→read`, …)
+- [x] Semantic embedding search (batch `/api/embed` — 115 symbols in ~7s), integrated into `HybridRetriever`
+- [x] Named scoring constants; merge by max score; partial-name duplicates dropped
+- [x] Benchmark: 10/10 keyword, 2/2 semantic (`--semantic`)
 
 ---
 
-## Phase 4 — Context Quality
-
-- [ ] Design final context hierarchy
-- [ ] Separate primary symbols from dependency symbols
-- [ ] Mark dependency depth
-- [x] Prevent the same symbol from appearing multiple times
-- [ ] Deduplicate method source included inside its containing class source
-- [ ] Prioritize relevant symbols
-- [ ] Limit context size
-- [ ] Add source truncation for large symbols
-- [ ] Make context deterministic
-- [ ] Test context quality with real project questions
+### LLM interaction
 
 ---
 
-## Phase 5 — Retrieval Quality
+### LLM interaction
+- [x] Ollama client connected; grounded system prompt + grounding suffix near the question
+- [x] Consistent refusal when the context does not cover the question
+- [x] Friendly errors: Ollama down / model missing; `num_ctx` = 32k; embedding timeout
+- [x] Model evaluation: `1.5b` default (fast), `3b` for depth
 
-- [ ] Improve filename matching
-- [ ] Improve symbol-name matching
-- [ ] Improve query tokenization
-- [x] Handle `snake_case`
-- [x] Handle `CamelCase`
-- [x] Handle dotted names
-- [x] Handle simple inflections (`built→build`, `files→file`)
-- [x] Add semantic/embedding search (batch `/api/embed` — 115 symbols in ~7s)
-- [x] Integrate embedding search into `HybridRetriever`
-- [ ] Improve file/symbol scoring
-- [ ] Improve result ranking
+### Testing & tooling
+- [x] `PythonSymbolVisitor`, call extraction, nested-structure tests
+- [x] Context formatting tests; end-to-end context check
+- [x] Keyword + semantic retrieval benchmarks; context token counter
 
----
-
-## Phase 6 — LLM Interaction
-
-- [x] Connect LLM client
-- [x] Create system prompt
-- [x] Force context-only answers
-- [x] Prevent unsupported claims
-- [x] Evaluate and select the best local model
-- [ ] Improve system prompt
-- [ ] Improve answer formatting
-- [ ] Reduce unnecessary verbosity
-- [ ] Make answers reference files and symbols
-- [ ] Handle insufficient-context responses consistently
-- [ ] Test answer accuracy against the actual codebase
+### CLI
+- [x] Basic CLI with panels and markdown rendering
+- [x] Interactive project path (Enter = default project)
+- [x] Quit command (`q` / `ض`)
 
 ---
 
-## Phase 7 — Testing
+## Track 1 — Survive a real, larger project
 
-- [x] Test `PythonSymbolVisitor`
-- [x] Test call extraction
-- [x] Test nested structures
-- [ ] Add `SymbolDependencyBuilder` tests
-- [ ] Add recursive dependency tests
-- [ ] Add duplicate dependency tests
-- [ ] Add `SymbolContextBuilder` tests
-- [x] Add context formatting tests
-- [ ] Add retrieval tests
-- [ ] Add end-to-end assistant tests
-- [ ] Create a benchmark of project questions
+The system has only ever been tested on itself (56 files).
+Goal: survive a codebase 5–10× larger without quality or speed collapse.
 
----
+- [ ] Run the assistant on a real open-source Python project (300+ files) and record every breakage
+- [ ] Measure and record on that project: index time, embedding build time, retrieval latency, LLM latency
+- [ ] Per-project embedding cache on disk (revisit the "no cache needed" decision with measured numbers)
+- [ ] Re-index only changed files (content hash)
+- [ ] Token budget guard: warn above 75% of the window (`token_counter.py` becomes a runtime check)
+- [ ] Context trimming policy: docstrings first, then sources — never signatures
+- [ ] Clear separation of primary symbols vs dependency symbols in the context
+- [ ] Distinguish project symbols from external/library calls in the context
+- [ ] Make context fully deterministic (stable ordering at every stage)
 
-## Phase 8 — User Interface
-
-- [x] Basic CLI
-- [ ] Improve CLI output formatting
-- [ ] Add readable sections
-- [ ] Add syntax highlighting
-- [ ] Add loading/progress indicators
-- [x] Accept project path from the user (interactive prompt, Enter = default)
-- [ ] Add `/files` command
-- [ ] Add `/symbols` command
-- [ ] Add `/context` command
-- [ ] Add `/help` command
-- [ ] Add `/quit` command
+Exit criterion: a correct, grounded answer about that project with context under 75%.
 
 ---
 
-## Phase 9 — Architecture & Performance
+## Track 2 — Close the measured retrieval gaps
 
-- [ ] Avoid rebuilding the entire project index for every question
-- [ ] Cache project analysis
-- [ ] Cache symbol relationships
-- [ ] Re-index only changed files
-- [ ] Separate indexing from querying
-- [ ] Separate retrieval from context construction
-- [ ] Separate context construction from LLM communication
-- [ ] Add logging/debug mode
-- [ ] Measure retrieval latency
-- [ ] Measure context-building latency
-- [ ] Measure LLM latency
+Every documented failure in the benchmark becomes a passing case.
+
+- [ ] Enrich embedding text (`name + signature + docstring`) — attack the three documented semantic misses
+- [ ] Re-evaluate `THRESHOLD` with evidence from the semantic suite
+- [ ] Multilingual questions: one explicit decision — defer in writing, or adopt a cross-lingual embedding model
+- [ ] Handle nested classes/functions correctly in dependency resolution
+- [ ] Unit tests for `SymbolDependencyBuilder` and `SymbolContextBuilder` accuracy
 
 ---
 
-## Phase 10 — Advanced Code Understanding
+## Track 3 — Answer quality (the user's actual experience)
 
-- [ ] Build a complete symbol dependency graph
-- [ ] Resolve imports
-- [ ] Resolve module-level references
-- [ ] Resolve aliases
-- [ ] Resolve inheritance
-- [ ] Resolve method overrides
-- [ ] Track symbol references beyond function calls
-- [ ] Add variable/reference relationships
+The benchmark measures retrieval. Nothing measures answers yet.
+
+- [ ] Answer-level rubric: expected facts per benchmark question, judged by hand, recorded
+- [ ] Answers must cite `file:symbol` consistently — mechanically checkable
+- [ ] Tighten answer verbosity (`num_predict`, prompt) using the rubric
+- [ ] `/model` command: `1.5b` (fast) ↔ `3b` (deep) — speed/quality in the user's hands
+
+---
+
+## Track 4 — Ship as a tool
+
+Goal: someone who is not the author can install and use it.
+
+- [ ] `pyproject.toml` → pip installable
+- [ ] CLI polish: readable sections, syntax highlighting, progress indicators
+- [ ] CLI commands: `/files`, `/symbols`, `/context`, `/help`
+- [ ] Logging/debug mode
+- [ ] README install path verified on a clean machine
+
+Exit: tag `v0.2`.
+
+---
+
+## Future — advanced code understanding
+
+- [ ] Complete symbol dependency graph
+- [ ] Resolve imports, module-level references, aliases
+- [ ] Resolve inheritance and method overrides
+- [ ] Track references beyond calls; variable/reference relationships
 - [ ] Support additional programming languages
-- [ ] Add code-change awareness
-- [ ] Add project-wide reasoning
-
----
-
-## Current Priority
-
-1. [x] Clean context output — remove dangling `==File==` header and empty `Dependencies:` line
-2. [x] Fix crash when the project has no README (`build_context` dereferences `readme.content` on `None` — found by `tests/test_context_output.py`)
-3. [x] Deduplicate method source included inside its containing class source
-4. [x] Build a reference question benchmark (tests/retrieval_benchmark.py — 10/10)
-5. [x] Test context quality with real project questions
-6. [ ] Improve retrieval quality
+- [ ] Code-change awareness; project-wide reasoning
 
 ---
 
