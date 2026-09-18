@@ -29,6 +29,7 @@ class Project:
         "unknown"    : 0
 }
         self.is_indexed = False
+        self.analysis_errors = []
 
     
     def get_file_by_path(self,path):

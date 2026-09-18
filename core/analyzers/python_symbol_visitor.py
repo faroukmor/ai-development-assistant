@@ -66,6 +66,9 @@ class PythonSymbolVisitor(ast.NodeVisitor):
                 return None
             for i, part in enumerate(parts):
                 if part == "self":
+                    # no class in scope: the call cannot be resolved
+                    if self.current_class is None:
+                        return None
                     parts[i] = self.current_class
             return ".".join(parts)
 
@@ -79,6 +82,9 @@ class PythonSymbolVisitor(ast.NodeVisitor):
 
         elif isinstance(node, ast.Constant):
             return None
+
+        # unnameable targets (Subscript, Lambda, ...)
+        return None
 
 
     def visit_Call(self, node):

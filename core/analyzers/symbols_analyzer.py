@@ -8,7 +8,13 @@ class SymbolAnalyzer:
         for file in self.project.files:
 
             if file.programming_language == "Python":
-                PSV.PythonSymbolVisitor(file).analyze()
+                try:
+                    PSV.PythonSymbolVisitor(file).analyze()
+                except Exception as e:
+                    # one bad file must not abort the whole scan
+                    self.project.analysis_errors.append(
+                        (file.path, type(e).__name__, str(e))
+                    )
 
             elif file.programming_language == "Java":
                 print("this program doesn`t support JAVA for now")
