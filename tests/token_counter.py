@@ -10,18 +10,26 @@ MODEL = "Qwen/Qwen2.5-Coder-3B"
 MAX_CONTEXT = 32_768
 
 
-def main():
+_TOKENIZER = None
 
-    tokenizer = AutoTokenizer.from_pretrained(MODEL)
+
+def get_tokenizer():
+    global _TOKENIZER
+    if _TOKENIZER is None:
+        _TOKENIZER = AutoTokenizer.from_pretrained(MODEL)
+    return _TOKENIZER
+
+
+def count_tokens(text):
+    """Tokens a context string costs in the model's window."""
+    return len(get_tokenizer().encode(text, add_special_tokens=False))
+
+
+def main():
 
     text = FILE_PATH.read_text(encoding="utf-8")
 
-    tokens = len(
-        tokenizer.encode(
-            text,
-            add_special_tokens=False
-        )
-    )
+    tokens = count_tokens(text)
 
     percent = tokens / MAX_CONTEXT * 100
     remaining = MAX_CONTEXT - tokens
