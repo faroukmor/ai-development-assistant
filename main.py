@@ -1,7 +1,10 @@
+import time
+
 import core.assistant.ai_assistant as ai
 from core.llm.external_llm_client import ExternalLLMClient, AuthError
 
 from rich.console import Console
+from rich.live import Live
 from rich.panel import Panel
 from rich.markdown import Markdown
 from rich.prompt import Prompt
@@ -35,7 +38,7 @@ if use_external == "y":
         "API base URL [dim](Enter for OpenRouter)[/dim]",
         default="https://openrouter.ai/api/v1",
     )
-    api_key = Prompt.ask("API key (hidden, shown as *)", password=True).strip()
+    api_key = Prompt.ask("API key (hidden, shown as *)").strip()
     if not api_key:
         console.print("[yellow]No key entered — running locally instead.[/yellow]")
         use_external = "n"
@@ -60,6 +63,30 @@ console.print(
     )
 )
 
+def render_stream(question):
+    """Stream the answer word by word (local and external models alike)."""
+    stream = assistant.ask_stream(question)
+    parts = []
+    started = time.time()
+
+    # the setup (index, retrieval, context) runs inside the first next();
+    # errors here (401, unknown model, ollama down) surface immediately
+    with console.status("[bold cyan]Analyzing project...[/bold cyan]", spinner="dots"):
+        first = next(stream, None)
+    if first is None:
+        console.print("[yellow]The model returned no content.[/yellow]")
+        return
+
+    parts.append(first)
+    title = f"[bold cyan]AI Assistant · {assistant.model_info}[/bold cyan]"
+    with Live(console=console, refresh_per_second=8, vertical_overflow="visible") as live:
+        live.update(Panel(Markdown("".join(parts)), title=title, border_style="cyan", padding=(1, 2)))
+        for chunk in stream:
+            parts.append(chunk)
+            live.update(Panel(Markdown("".join(parts)), title=title, border_style="cyan", padding=(1, 2)))
+
+    console.print(f"[dim]answered in {time.time() - started:.1f}s[/dim]")
+
 while True:
 
     try:
@@ -69,20 +96,7 @@ while True:
             console.print("[dim]Goodbye.[/dim]")
             break
 
-        with console.status(
-            "[bold cyan]Analyzing project...[/bold cyan]",
-            spinner="dots"
-        ):
-            answer = assistant.ask(user_input)
-
-        console.print(
-            Panel(
-                Markdown(answer),
-                title=f"[bold cyan]AI Assistant · {assistant.model_info}[/bold cyan]",
-                border_style="cyan",
-                padding=(1, 2)
-            )
-        )
+        render_stream(user_input)
 
     except KeyboardInterrupt:
         console.print("\n[dim]Goodbye.[/dim]")
@@ -107,15 +121,7 @@ while True:
                 console.print(Panel(f"[bold red]Error[/bold red]\n{key_error}", border_style="red"))
                 continue
             try:
-                answer = assistant.ask(user_input)
-                console.print(
-                    Panel(
-                        Markdown(answer),
-                        title=f"[bold cyan]AI Assistant · {assistant.model_info}[/bold cyan]",
-                        border_style="cyan",
-                        padding=(1, 2)
-                    )
-                )
+                render_stream(user_input)
             except Exception as retry_error:
                 console.print(Panel(f"[bold red]{type(retry_error).__name__}[/bold red]\n{retry_error}", border_style="red"))
             continue

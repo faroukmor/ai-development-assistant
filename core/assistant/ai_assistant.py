@@ -19,7 +19,8 @@ class AIDevelopmentAssistant:
             return "qwen2.5-coder:3b (Ollama, local)"
         base = self.llm_client.base_url.split("//")[-1].rstrip("/")
         return f"{self.llm_client.model_name} ({base}, external)"
-    def ask(self,user_prompt):
+    def _build_messages(self, user_prompt):
+        """Index, retrieve and assemble the grounded messages for a question."""
         PI.ProjectIndexer(self.project).build()
 
         if self.embedding_search is None:
@@ -28,11 +29,11 @@ class AIDevelopmentAssistant:
 
         retriever = HR.HybridRetriever(self.project, self.embedding_search)
 
-        #results of every search 
+        #results of every search
         retrievers = retriever.search(user_prompt)
-        
-        context = PCB.ProjectContextBuilder(self.project,retrievers).build_context()
-        messages = [
+
+        context = PCB.ProjectContextBuilder(self.project, retrievers).build_context()
+        return [
                     {
                         "role": "system",
                         "content": """You are an AI Development Assistant specialized in software engineering.
@@ -69,6 +70,15 @@ Use it as your only source of truth.
                         )
                     }
                 ]
-        model = self.llm_client or llm_client.LLMClient('qwen2.5-coder:3b')
-        response = model.ask(messages)
-        return response
+
+    def _model(self):
+        return self.llm_client or llm_client.LLMClient('qwen2.5-coder:3b')
+
+    def ask(self,user_prompt):
+        messages = self._build_messages(user_prompt)
+        return self._model().ask(messages)
+
+    def ask_stream(self, user_prompt):
+        """Yield the answer incrementally; the setup runs inside the first next()."""
+        messages = self._build_messages(user_prompt)
+        yield from self._model().ask_stream(messages)
