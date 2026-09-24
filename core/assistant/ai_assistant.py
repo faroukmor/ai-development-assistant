@@ -5,9 +5,12 @@ import core.project.project as P
 import core.retrieval.hybrid_retriever as HR
 import core.retrieval.embedding_search as ES
 class AIDevelopmentAssistant:
-    def __init__(self,project_path):
+    def __init__(self,project_path,llm_client=None):
         self.project = P.Project(project_path)
-        self.embedding_search = None 
+        self.embedding_search = None
+        # llm_client follows the LLMClient contract: ask(messages) -> str.
+        # None means the local default (Ollama qwen2.5-coder:3b).
+        self.llm_client = llm_client
     def ask(self,user_prompt):
         PI.ProjectIndexer(self.project).build()
 
@@ -58,6 +61,6 @@ Use it as your only source of truth.
                         )
                     }
                 ]
-        model = llm_client.LLMClient('qwen2.5-coder:3b')
+        model = self.llm_client or llm_client.LLMClient('qwen2.5-coder:3b')
         response = model.ask(messages)
         return response
