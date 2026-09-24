@@ -4,7 +4,6 @@ import core.assistant.ai_assistant as ai
 from core.llm.external_llm_client import ExternalLLMClient, AuthError
 
 from rich.console import Console
-from rich.live import Live
 from rich.panel import Panel
 from rich.markdown import Markdown
 from rich.prompt import Prompt
@@ -97,9 +96,12 @@ console.print(
 )
 
 def render_stream(question):
-    """Stream the answer word by word (local and external models alike)."""
+    """Stream the answer as running text (local and external models alike).
+
+    rich.Live redraws in place only while the panel fits the screen; once it
+    overflows it prints a fresh panel per update. Running text avoids that.
+    """
     stream = assistant.ask_stream(question)
-    parts = []
     started = time.time()
 
     # the setup (index, retrieval, context) runs inside the first next();
@@ -110,15 +112,15 @@ def render_stream(question):
         console.print("[yellow]The model returned no content.[/yellow]")
         return
 
-    parts.append(first)
-    title = f"[bold cyan]AI Assistant · {assistant.model_info}[/bold cyan]"
-    with Live(console=console, refresh_per_second=8, vertical_overflow="visible") as live:
-        live.update(Panel(Markdown("".join(parts)), title=title, border_style="cyan", padding=(1, 2)))
-        for chunk in stream:
-            parts.append(chunk)
-            live.update(Panel(Markdown("".join(parts)), title=title, border_style="cyan", padding=(1, 2)))
+    console.print(f"[bold cyan]AI Assistant[/bold cyan] [dim]· {assistant.model_info}[/dim]")
+    console.out(first, end="", highlight=False)
+    for chunk in stream:
+        console.out(chunk, end="", highlight=False)
+    console.print()
 
-    console.print(f"[dim]answered in {time.time() - started:.1f}s[/dim]")
+    console.print(
+        f"[dim]answered in {time.time() - started:.1f}s · {assistant.model_info}[/dim]"
+    )
 
 while True:
 
