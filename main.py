@@ -14,6 +14,39 @@ DEFAULT_PROJECT_PATH = r"C:\Users\HP\Documents\Programming\GitHub repos\ai-devel
 
 console = Console()
 
+def read_hidden(label):
+    """Read a secret with a * per character, accepting typing and paste.
+
+    rich's password mode and getpass both swallowed all input in the Windows
+    terminal, so this reads the console directly via msvcrt; other platforms
+    fall back to getpass.
+    """
+    try:
+        import msvcrt
+    except ImportError:
+        import getpass
+        return getpass.getpass(label).strip()
+
+    print(label, end="", flush=True)
+    chars = []
+    while True:
+        ch = msvcrt.getwch()
+        if ch in ("\r", "\n"):
+            print()
+            return "".join(chars).strip()
+        if ch in ("\b", "\x08"):
+            if chars:
+                chars.pop()
+                print("\b \b", end="", flush=True)
+            continue
+        if ch == "\x03":  # Ctrl+C
+            raise KeyboardInterrupt
+        if ch in ("\x00", "\xe0"):  # special keys (arrows, F-keys): skip the pair
+            msvcrt.getwch()
+            continue
+        chars.append(ch)
+        print("*", end="", flush=True)
+
 user_path = Prompt.ask("[bold blue]Project Path[/bold blue] [dim](Enter for default)[/dim]")
 
 project_path = user_path.strip() or DEFAULT_PROJECT_PATH
@@ -38,7 +71,7 @@ if use_external == "y":
         "API base URL [dim](Enter for OpenRouter)[/dim]",
         default="https://openrouter.ai/api/v1",
     )
-    api_key = Prompt.ask("API key (hidden, shown as *)").strip()
+    api_key = read_hidden("API key (hidden, shown as *): ")
     if not api_key:
         console.print("[yellow]No key entered — running locally instead.[/yellow]")
         use_external = "n"
@@ -111,7 +144,7 @@ while True:
                 title="Error",
                 border_style="red"
             ))
-            new_key = Prompt.ask("New API key (hidden, shown as *, empty to cancel)", password=True).strip()
+            new_key = read_hidden("New API key (hidden, shown as *, empty to cancel): ")
             if not new_key:
                 console.print("[dim]No key entered — staying with the current one.[/dim]")
                 continue
