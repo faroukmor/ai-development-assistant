@@ -5,6 +5,7 @@ from core.llm.external_llm_client import ExternalLLMClient, AuthError
 
 from rich.console import Console
 from rich.panel import Panel
+from rich.markdown import Markdown
 from rich.prompt import Prompt
 
 
@@ -95,10 +96,10 @@ console.print(
 )
 
 def render_stream(question):
-    """Stream as normal scrollable output — every chunk stays in the
-    terminal scrollback, so the start of a long answer can be read while
-    the rest is still generating. A redrawn growing panel cannot offer
-    that: redrawing in place consumes the scrollback by design.
+    """Stream as normal scrollable output while generating, then the complete
+    answer once in a panel. Live redrawing is the only way to keep a growing
+    box, and it consumes the scrollback — so the stream stays plain and the
+    boxed version is printed once at the end.
     """
     stream = assistant.ask_stream(question)
     started = time.time()
@@ -112,11 +113,21 @@ def render_stream(question):
         return
 
     console.print("[bold cyan]AI Assistant[/bold cyan]")
+    parts = [first]
     console.out(first, end="", highlight=False)
     for chunk in stream:
+        parts.append(chunk)
         console.out(chunk, end="", highlight=False)
     console.print()
 
+    console.print(
+        Panel(
+            Markdown("".join(parts)),
+            title="[bold cyan]AI Assistant[/bold cyan]",
+            border_style="cyan",
+            padding=(1, 2)
+        )
+    )
     console.print(
         f"[dim]answered in {time.time() - started:.1f}s · {assistant.model_info}[/dim]"
     )
