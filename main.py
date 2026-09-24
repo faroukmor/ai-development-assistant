@@ -1,5 +1,3 @@
-import getpass
-
 import core.assistant.ai_assistant as ai
 from core.llm.external_llm_client import ExternalLLMClient, AuthError
 
@@ -33,12 +31,19 @@ if use_external == "y":
         border_style="yellow",
     ))
     model_name = Prompt.ask("Model name [dim](e.g. openai/gpt-4o-mini)[/dim]")
-    api_key = getpass.getpass("API key (hidden): ").strip()
     base_url = Prompt.ask(
         "API base URL [dim](Enter for OpenRouter)[/dim]",
         default="https://openrouter.ai/api/v1",
     )
-    llm = ExternalLLMClient(model_name, api_key, base_url)
+    api_key = Prompt.ask("API key (hidden, shown as *)", password=True).strip()
+    if not api_key:
+        console.print("[yellow]No key entered — running locally instead.[/yellow]")
+        use_external = "n"
+
+    if use_external == "y":
+        llm = ExternalLLMClient(model_name, api_key, base_url)
+    else:
+        console.print("[dim]Running locally with Ollama — nothing leaves this machine.[/dim]")
 else:
     console.print("[dim]Running locally with Ollama — nothing leaves this machine.[/dim]")
 
@@ -92,7 +97,7 @@ while True:
                 title="Error",
                 border_style="red"
             ))
-            new_key = getpass.getpass("New API key (hidden, empty to cancel): ").strip()
+            new_key = Prompt.ask("New API key (hidden, shown as *, empty to cancel)", password=True).strip()
             if not new_key:
                 console.print("[dim]No key entered — staying with the current one.[/dim]")
                 continue
