@@ -1,13 +1,10 @@
-import textwrap
 import time
 
 import core.assistant.ai_assistant as ai
 from core.llm.external_llm_client import ExternalLLMClient, AuthError
 
 from rich.console import Console
-from rich.live import Live
 from rich.panel import Panel
-from rich.markdown import Markdown
 from rich.prompt import Prompt
 
 
@@ -97,22 +94,11 @@ console.print(
     )
 )
 
-def _tail(text, max_lines=None):
-    """Last few wrapped lines of the streaming answer, so the preview panel
-    always fits the screen and Live redraws it in place instead of stacking."""
-    limit = max_lines or max(3, console.size.height - 8)
-    width = max(20, console.size.width - 8)
-    lines = []
-    for line in text.split("\n"):
-        lines.extend(textwrap.wrap(line, width=width) or [""])
-    return "\n".join(lines[-limit:])
-
 def render_stream(question):
-    """Stream with a small transient preview, then one final panel.
-
-    The preview shows the last few lines only, so it always fits the screen
-    and Live can redraw it in place; transient=True erases it when done, and
-    the complete answer is printed once in its final panel.
+    """Stream as normal scrollable output — every chunk stays in the
+    terminal scrollback, so the start of a long answer can be read while
+    the rest is still generating. A redrawn growing panel cannot offer
+    that: redrawing in place consumes the scrollback by design.
     """
     stream = assistant.ask_stream(question)
     started = time.time()
@@ -125,25 +111,12 @@ def render_stream(question):
         console.print("[yellow]The model returned no content.[/yellow]")
         return
 
-    parts = [first]
-    with Live(transient=True, console=console, refresh_per_second=10) as live:
-        for chunk in stream:
-            parts.append(chunk)
-            live.update(Panel(
-                _tail("".join(parts)),
-                title="AI Assistant (streaming)",
-                border_style="cyan",
-                padding=(1, 2),
-            ))
+    console.print("[bold cyan]AI Assistant[/bold cyan]")
+    console.out(first, end="", highlight=False)
+    for chunk in stream:
+        console.out(chunk, end="", highlight=False)
+    console.print()
 
-    console.print(
-        Panel(
-            Markdown("".join(parts)),
-            title="[bold cyan]AI Assistant[/bold cyan]",
-            border_style="cyan",
-            padding=(1, 2)
-        )
-    )
     console.print(
         f"[dim]answered in {time.time() - started:.1f}s · {assistant.model_info}[/dim]"
     )
