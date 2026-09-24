@@ -1,7 +1,7 @@
 import getpass
 
 import core.assistant.ai_assistant as ai
-from core.llm.external_llm_client import ExternalLLMClient
+from core.llm.external_llm_client import ExternalLLMClient, AuthError
 
 from rich.console import Console
 from rich.panel import Panel
@@ -83,6 +83,37 @@ while True:
         break
 
     except Exception as e:
+        # The external provider rejected the key: offer to re-enter it in
+        # place and retry the same question, without restarting the app.
+        if isinstance(e, AuthError) and isinstance(assistant.llm_client, ExternalLLMClient):
+            console.print(Panel(
+                f"[bold red]{type(e).__name__}[/bold red]\n{e}",
+                title="Error",
+                border_style="red"
+            ))
+            new_key = getpass.getpass("New API key (hidden, empty to cancel): ").strip()
+            if not new_key:
+                console.print("[dim]No key entered — staying with the current one.[/dim]")
+                continue
+            try:
+                assistant.llm_client.set_api_key(new_key)
+            except RuntimeError as key_error:
+                console.print(Panel(f"[bold red]Error[/bold red]\n{key_error}", border_style="red"))
+                continue
+            try:
+                answer = assistant.ask(user_input)
+                console.print(
+                    Panel(
+                        Markdown(answer),
+                        title="[bold cyan]AI Assistant[/bold cyan]",
+                        border_style="cyan",
+                        padding=(1, 2)
+                    )
+                )
+            except Exception as retry_error:
+                console.print(Panel(f"[bold red]{type(retry_error).__name__}[/bold red]\n{retry_error}", border_style="red"))
+            continue
+
         console.print(
             Panel(
                 f"[bold red]{type(e).__name__}[/bold red]\n{e}",
