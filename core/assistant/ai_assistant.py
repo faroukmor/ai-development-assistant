@@ -11,6 +11,14 @@ class AIDevelopmentAssistant:
         # llm_client follows the LLMClient contract: ask(messages) -> str.
         # None means the local default (Ollama qwen2.5-coder:3b).
         self.llm_client = llm_client
+
+    @property
+    def model_info(self):
+        """Which model answers right now, and where it runs."""
+        if self.llm_client is None:
+            return "qwen2.5-coder:3b (Ollama, local)"
+        base = self.llm_client.base_url.split("//")[-1].rstrip("/")
+        return f"{self.llm_client.model_name} ({base}, external)"
     def ask(self,user_prompt):
         PI.ProjectIndexer(self.project).build()
 

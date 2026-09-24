@@ -49,6 +49,7 @@ console.print(
     Panel.fit(
         "[bold cyan]AI Development Assistant[/bold cyan]\n"
         "[dim]Offline software engineering assistant[/dim]\n"
+        f"Model: {assistant.model_info}\n"
         "[dim]Type 'q' to quit[/dim]",
         border_style="cyan"
     )
@@ -72,7 +73,7 @@ while True:
         console.print(
             Panel(
                 Markdown(answer),
-                title="[bold cyan]AI Assistant[/bold cyan]",
+                title=f"[bold cyan]AI Assistant · {assistant.model_info}[/bold cyan]",
                 border_style="cyan",
                 padding=(1, 2)
             )
@@ -105,7 +106,7 @@ while True:
                 console.print(
                     Panel(
                         Markdown(answer),
-                        title="[bold cyan]AI Assistant[/bold cyan]",
+                        title=f"[bold cyan]AI Assistant · {assistant.model_info}[/bold cyan]",
                         border_style="cyan",
                         padding=(1, 2)
                     )
