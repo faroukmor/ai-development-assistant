@@ -101,7 +101,7 @@ def render_stream(question):
     box, and it consumes the scrollback — so the stream stays plain and the
     boxed version is printed once at the end.
     """
-    stream = assistant.ask_stream(question)
+    stream = assistant.answer_stream(question)
     started = time.time()
 
     # the setup (index, retrieval, context) runs inside the first next();

@@ -185,7 +185,7 @@ bindings, syntax errors, and per-file resilience.
 
 - Embedding throughput is ~17–18 texts/s on real symbols; the full 40,482-symbol
   index took **2,237–2,370s (≈37–40 minutes) across two runs** — and the
-  assistant rebuilds it on every start (`AIDevelopmentAssistant.ask` builds the
+  assistant rebuilds it on every start (`AIDevelopmentAssistant.answer` builds the
   index lazily, once per process). This is the measured justification for the
   on-disk embedding cache.
 - Scanning + AST analysis of 673 files measured 9.1s (13.9s under load) —

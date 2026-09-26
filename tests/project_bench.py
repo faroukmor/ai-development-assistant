@@ -149,7 +149,7 @@ def stage_ask(project, question):
         return
     started = time.time()
     try:
-        answer = assistant.ask(question)
+        answer = assistant.answer(question)
     except Exception as e:
         report_failure("ask", e)
         return

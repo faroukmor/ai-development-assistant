@@ -1,38 +1,43 @@
-import core.context.context_builder as PCB
-import core.llm.llm_client as llm_client
-import core.project.project_indexer as PI
-import core.project.project as P
-import core.retrieval.hybrid_retriever as HR
-import core.retrieval.embedding_search as ES
+from core.context.context_builder import ProjectContextBuilder
+from core.llm.llm_client import LLMClient
+from core.project.project import Project
+from core.project.project_indexer import ProjectIndexer
+from core.retrieval.embedding_search import EmbeddingSearch
+from core.retrieval.hybrid_retriever import HybridRetriever
+
+
+DEFAULT_MODEL = "qwen2.5-coder:3b"
+
+
 class AIDevelopmentAssistant:
     def __init__(self,project_path,llm_client=None):
-        self.project = P.Project(project_path)
+        self.project = Project(project_path)
         self.embedding_search = None
-        # llm_client follows the LLMClient contract: ask(messages) -> str.
-        # None means the local default (Ollama qwen2.5-coder:3b).
         self.llm_client = llm_client
 
     @property
     def model_info(self):
         """Which model answers right now, and where it runs."""
         if self.llm_client is None:
-            return "qwen2.5-coder:3b (Ollama, local)"
+            return f"{DEFAULT_MODEL} (Ollama, local)"
         base = self.llm_client.base_url.split("//")[-1].rstrip("/")
         return f"{self.llm_client.model_name} ({base}, external)"
-    def _build_messages(self, user_prompt):
-        """Index, retrieve and assemble the grounded messages for a question."""
-        PI.ProjectIndexer(self.project).build()
+
+    def _prepare_context(self, question):
+        """Index the project, retrieve relevant code, and assemble its context."""
+        ProjectIndexer(self.project).build()
 
         if self.embedding_search is None:
-            self.embedding_search = ES.EmbeddingSearch(self.project)
+            self.embedding_search = EmbeddingSearch(self.project)
             self.embedding_search.build_index()
 
-        retriever = HR.HybridRetriever(self.project, self.embedding_search)
+        retriever = HybridRetriever(self.project, self.embedding_search)
+        retrieval_results = retriever.search(question)
 
-        #results of every search
-        retrievers = retriever.search(user_prompt)
+        return ProjectContextBuilder(self.project, retrieval_results).build_context()
 
-        context = PCB.ProjectContextBuilder(self.project, retrievers).build_context()
+    def _build_messages(self, context, question):
+        """Assemble the prompt sent to the model, with the context as source of truth."""
         return [
                     {
                         "role": "system",
@@ -62,7 +67,7 @@ Use it as your only source of truth.
                     },
                     {
                         "role": "user",
-                        "content": user_prompt + (
+                        "content": question + (
                             "\n\n(Answer using ONLY the project context above. "
                             "Reply in the same language as the user's question. "
                             "If the context does not cover this question, say: "
@@ -71,14 +76,15 @@ Use it as your only source of truth.
                     }
                 ]
 
-    def _model(self):
-        return self.llm_client or llm_client.LLMClient('qwen2.5-coder:3b')
+    def _llm(self):
+        """The client that talks to a model: the external one if configured, Ollama otherwise."""
+        return self.llm_client or LLMClient(DEFAULT_MODEL)
 
-    def ask(self,user_prompt):
-        messages = self._build_messages(user_prompt)
-        return self._model().ask(messages)
+    def answer(self, question):
+        messages = self._build_messages(self._prepare_context(question), question)
+        return self._llm().ask(messages)
 
-    def ask_stream(self, user_prompt):
+    def answer_stream(self, question):
         """Yield the answer incrementally; the setup runs inside the first next()."""
-        messages = self._build_messages(user_prompt)
-        yield from self._model().ask_stream(messages)
+        messages = self._build_messages(self._prepare_context(question), question)
+        yield from self._llm().ask_stream(messages)
