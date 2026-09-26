@@ -8,7 +8,7 @@ from core.project.project_indexer import ProjectIndexer
 from core.retrieval.hybrid_retriever import HybridRetriever
 from tests.retrieval_benchmark import RETRIEVAL_BENCHMARK, SEMANTIC_BENCHMARK
 
-PROJECT_PATH = r"C:\Users\HP\Documents\PYTHON Project\ai-development-assistant"
+PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def hits_as_pairs(results):

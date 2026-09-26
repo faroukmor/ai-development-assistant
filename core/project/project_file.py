@@ -1,5 +1,5 @@
 import os 
-import core.project.file_reader as fr
+from core.project.file_reader import read_file
 
 EXTENSION_MAP = {
         '.py': 'Python',
@@ -31,5 +31,5 @@ class ProjectFile:
         self.symbols = []
 
     def read_content(self):
-        self.content = fr.read_file(self.path)
+        self.content = read_file(self.path)
 

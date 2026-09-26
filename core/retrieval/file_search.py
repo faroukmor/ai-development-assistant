@@ -1,5 +1,4 @@
-import os
-import core.retrieval.search_result as SR
+from core.retrieval.search_result import SearchResult,FILENAME_MATCH
 from core.retrieval.tokenizer import tokenize, match_tokens
 
 class FileSearch:
@@ -10,12 +9,12 @@ class FileSearch:
         result = []
         question_tokens = tokenize(question)
 
-        for file in self.project.files:
+        for file in (self.project.files or []):
             if match_tokens(tokenize(file.stem), question_tokens):
                 result.append(
-                    SR.SearchResult(
+                    SearchResult(
                         file=file,
-                        score=SR.FILENAME_MATCH,
+                        score=FILENAME_MATCH,
                         reason="Matched filename"
                     )
                 )

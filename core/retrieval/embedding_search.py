@@ -1,4 +1,4 @@
-import core.retrieval.search_result as SR
+from core.retrieval.search_result import SearchResult
 import json
 import time
 import urllib.request
@@ -8,8 +8,7 @@ EMBED_MODEL = "nomic-embed-text"
 EMBED_URL = "http://localhost:11434/api/embed"
 THRESHOLD = 0.60
 
-# 256 per request: the largest batch measured to stay inside the timeout while
-# still being fast (numbers in docs/track1-findings.md).
+# Largest batch that stays inside the timeout (see docs/track1-findings.md).
 EMBED_BATCH_SIZE = 256
 EMBED_TIMEOUT = 120
 EMBED_RETRIES = 2
@@ -22,7 +21,6 @@ class EmbeddingSearch:
         self.knowledge_base = []
 
     def search(self, question):
-        # an empty index has nothing to compare against
         if not self.knowledge_base:
             return []
 
@@ -34,7 +32,7 @@ class EmbeddingSearch:
         for symbol, file_path, text, embedding in self.knowledge_base:
             similarity = self.cosine_similarity(query_embed, embedding)
             if similarity >= THRESHOLD:
-                results.append(SR.SearchResult(
+                results.append(SearchResult(
                     file=self.project.get_file_by_path(file_path),
                     score=round(similarity * 100, 1),
                     reason="semantic match",
@@ -69,7 +67,7 @@ class EmbeddingSearch:
             self.knowledge_base.append((symbol, file_path, text, embedding))
 
     def get_embeddings(self, texts, verbose=True):
-        """Embed every text in batches; one request cannot carry a real project."""
+        """Embed every text in batches."""
         embeddings = []
         total = len(texts)
 
@@ -83,10 +81,9 @@ class EmbeddingSearch:
         return embeddings
 
     def get_embedding_batch(self, texts, start, total, verbose=True):
-        """One vector per text, in order; None marks a text the server refuses.
-
-        A failing batch is retried, then split in half; the list always keeps
-        `len(texts)` entries so vectors stay aligned with symbols.
+        """Vectors in the same order as texts; None for a text the server rejects.
+        A failing batch is retried, then split in half. The result always has
+        `len(texts)` entries, so vectors stay aligned with symbols.
         """
         if not texts:
             return []

@@ -1,18 +1,18 @@
-"""Track 1 instrument: run the whole pipeline against a real project and report
-what breaks, with numbers for every stage.
+"""Run the full pipeline against a real project and report every stage.
 
 Usage:
     python -m tests.project_bench <project_path> [--embed] [--ask "question"]
 
 Stages: scan + index, AST analysis, keyword retrieval, embedding index
 (--embed), context + tokens, LLM answer (--ask). A failing stage is reported
-and the run continues, so one breakage cannot hide the rest.
+and the run continues.
 """
+import os
 import sys
 import time
 import traceback
 
-sys.path.insert(0, __file__.rsplit("tests", 1)[0].rstrip("\\/"))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.project.project import Project
 from core.project.project_indexer import ProjectIndexer
@@ -39,8 +39,7 @@ def build_project(path):
 
     project = Project(path)
 
-    # Mirrors ProjectIndexer.build(), but timed phase by phase so a slowdown
-    # can be attributed to scanning, indexing or AST analysis.
+    # same steps as ProjectIndexer.build(), timed separately
     started = time.time()
     PL.ProjectLoader().load_files(project)
     loaded = time.time() - started
@@ -57,7 +56,7 @@ def build_project(path):
     print(f"  load files      : {loaded:.2f}s")
     print(f"  index metadata  : {indexed:.2f}s")
     print(f"  AST analysis    : {analyzed:.2f}s")
-    print(f"files             : {len(project.files)}")
+    print(f"files             : {len(project.files or [])}")
     print(f"languages         : { {k: v for k, v in project.languages.items() if v} }")
     print(f"total size        : {project.total_size / 1048576:.1f} MB")
     print(f"type              : {project.type}")
@@ -68,7 +67,8 @@ def build_project(path):
 
 def stage_analysis(project):
     stage(2, "AST analysis")
-    symbols = [s for f in project.files for s in f.symbols]
+    files = project.files or []
+    symbols = [s for f in files for s in f.symbols]
     print(f"symbols           : {len(symbols)}")
     print(f"classes           : {len([s for s in symbols if s.type == 'class'])}")
     print(f"functions/methods : {len([s for s in symbols if s.type != 'class'])}")

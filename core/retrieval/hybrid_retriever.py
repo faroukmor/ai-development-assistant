@@ -1,29 +1,10 @@
-import core.retrieval.file_search as FS
-import core.retrieval.symbol_search as SS
-import core.project.project as P
+from core.retrieval.file_search import FileSearch
+from core.retrieval.symbol_search import SymbolSearch
 from core.retrieval.tokenizer import tokenize
 class HybridRetriever:
     def __init__(self, project, embedding_search=None):
         self.project = project
         self.embedding_search = embedding_search
-
-    def rank_results(self, results):
-        merged = {}
-        for result in results:
-            key = result.file.path
-
-            if key in merged:
-                if result.score > merged[key].score:
-                    result.symbol = result.symbol or merged[key].symbol
-                    merged[key] = result
-                else:
-                    merged[key].symbol = merged[key].symbol or result.symbol
-            else:
-                merged[key] = result
-
-        final = list(merged.values())
-        final = self.drop_partial_duplicates(final)     # ← البند الجديد فقط
-        return sorted(final, key=lambda r: r.score, reverse=True)
 
     def drop_partial_duplicates(self, results):
         symbol_results = [r for r in results if r.symbol]
@@ -40,10 +21,30 @@ class HybridRetriever:
                         break
         return [r for r in results if r not in partials]
 
+
+    def rank_results(self, results):
+        merged = {}
+        for result in results:
+            key = result.file.path
+
+            if key in merged:
+                if result.score > merged[key].score:
+                    result.symbol = result.symbol or merged[key].symbol
+                    merged[key] = result
+                else:
+                    merged[key].symbol = merged[key].symbol or result.symbol
+            else:
+                merged[key] = result
+
+        final = list(merged.values())
+        final = self.drop_partial_duplicates(final)  
+        return sorted(final, key=lambda r: r.score, reverse=True)
+
+
     def search(self,question):
         results = []
-        results += FS.FileSearch(self.project).search(question)
-        results += SS.SymbolSearch(self.project).search(question)
+        results += FileSearch(self.project).search(question)
+        results += SymbolSearch(self.project).search(question)
         if self.embedding_search:
             results += self.embedding_search.search(question)
         return self.rank_results(results)

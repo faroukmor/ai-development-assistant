@@ -35,9 +35,7 @@ def find(symbols, name):
 
 
 def run_visitor_checks():
-    # Regression: a module-level helper taking `self` as a plain parameter
-    # (sqlalchemy sql/base.py:295) used to join a None into the call name and
-    # abort the analysis of the whole project with a TypeError.
+    # Regression: `self` as a plain parameter (sqlalchemy sql/base.py:295)
     symbols = analyze(
         "def _generative(fn, self, *args, **kw):\n"
         "    self = self._generate()\n"
@@ -47,7 +45,7 @@ def run_visitor_checks():
     assert generative.calls == [], \
         "`self` outside a class is unresolvable — the call must be dropped, not crash"
 
-    # Inside a class the same call must still resolve through the class name.
+    # inside a class the same call resolves through the class name
     symbols = analyze(
         "class LLMClient:\n"
         "    def ask(self, messages):\n"

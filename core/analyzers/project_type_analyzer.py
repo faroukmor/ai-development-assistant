@@ -27,7 +27,7 @@ class ProjectTypeAnalyzer:
             "C": 0, "Java": 0, "Ruby": 0, "Go": 0, "Rust": 0,
             "HTML": 0, "CSS": 0,
         }
-        for file in self.project.files:
+        for file in (self.project.files or []):
             if file.name in PROJECT_TYPE_RULES:
                 language_points[PROJECT_TYPE_RULES[file.name]] += 5
                 continue

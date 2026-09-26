@@ -1,5 +1,5 @@
-import core.analyzers.analysis_pipeline as AP
-import core.project.project_loader as PL
+from core.analyzers.analysis_pipeline import ProjectAnalyzer
+from core.project.project_loader import ProjectLoader
 class ProjectIndexer:
     def __init__(self,project):
         self.project = project
@@ -8,7 +8,7 @@ class ProjectIndexer:
     def index_files(self):
         if self.project.is_indexed:
             return
-        for file in self.project.files:
+        for file in (self.project.files or []):
             if file.programming_language in self.project.languages:
                 self.project.languages[file.programming_language] += 1
                 if file.name.lower() == "readme.md": 
@@ -21,7 +21,7 @@ class ProjectIndexer:
         self.project.is_indexed = True
 
     def build(self):
-        PL.ProjectLoader().load_files(self.project)
+        ProjectLoader().load_files(self.project)
         self.index_files()
-        AP.ProjectAnalyzer(self.project).analyze()
+        ProjectAnalyzer(self.project).analyze()
     

@@ -1,8 +1,8 @@
-import core.retrieval.symbol_search as SS
+from core.retrieval.symbol_search import SymbolSearch
 class SymbolDependencyBuilder:
     def __init__(self, project):
         self.project = project
-        self.symbol_search = SS.SymbolSearch(project)
+        self.symbol_search = SymbolSearch(project)
         self.class_names = set()
         for file in (project.files or []):
             for symbol in file.symbols:
@@ -10,7 +10,7 @@ class SymbolDependencyBuilder:
                     self.class_names.add(symbol.name)
 
     def get_symbol_identity(self,symbol,file):
-        # unique identity across the project, in the form file:name:parent
+        # file:name:parent
         parent = symbol.parent.name if symbol.parent != None else ""
         return f"""{file.name}:{symbol.name}:{parent}"""
     

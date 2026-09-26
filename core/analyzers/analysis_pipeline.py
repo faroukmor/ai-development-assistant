@@ -1,6 +1,6 @@
-import core.analyzers.project_type_analyzer as pta
-import core.analyzers.entry_point_analyzer as epa
-import core.analyzers.symbols_analyzer as sa
+from core.analyzers.project_type_analyzer import ProjectTypeAnalyzer
+from core.analyzers.entry_point_analyzer import EntryPointAnalyzer
+from core.analyzers.symbols_analyzer import SymbolAnalyzer
 
 
 class ProjectAnalyzer:
@@ -9,8 +9,8 @@ class ProjectAnalyzer:
     def analyze(self):
         if self.project.type is not None:
             return
-        pta.ProjectTypeAnalyzer(self.project).detect_project_type()
-        epa.EntryPointAnalyzer(self.project).detect_entry_points()
-        sa.SymbolAnalyzer(self.project).detect_symbols()
+        ProjectTypeAnalyzer(self.project).detect_project_type()
+        EntryPointAnalyzer(self.project).detect_entry_points()
+        SymbolAnalyzer(self.project).detect_symbols()
 
     

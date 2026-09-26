@@ -4,10 +4,11 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.project.project import Project
+from core.project.project_file import ProjectFile
 from core.context.context_builder import ProjectContextBuilder
 from core.context.context_formatter import ProjectContextFormatter
 
-PROJECT_PATH = r"C:\Users\HP\Documents\PYTHON Project\ai-development-assistant"
+PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 class FakeFile:
@@ -25,8 +26,9 @@ class FakeRetriever:
     reason = "unit test"
 
 
-class FakeReadme:
-    content = "# Test Project\n\nFake readme for context output test."
+class FakeReadme(ProjectFile):
+    def __init__(self):
+        self.content = "# Test Project\n\nFake readme for context output test."
 
 
 def run_checks():

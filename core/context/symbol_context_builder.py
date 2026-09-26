@@ -1,9 +1,9 @@
-import core.context.symbol_dependency_builder as SDB
+from core.context.symbol_dependency_builder import SymbolDependencyBuilder
 class SymbolContextBuilder:
     def __init__(self,project,retrievers):
         self.project = project
         self.retrievers = retrievers
-        self.dependency_builder = SDB.SymbolDependencyBuilder(self.project)
+        self.dependency_builder = SymbolDependencyBuilder(self.project)
 
     def get_symbol_source(self, symbol, file):
         if not file.content:

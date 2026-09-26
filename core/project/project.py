@@ -1,14 +1,17 @@
 import os 
+from typing import Optional
+
+from core.project.project_file import ProjectFile
 
 
 class Project:
     def __init__(self,path):
         self.name = os.path.basename(path)
         self.path = path
-        self.files = None
-        self.readme = None
+        self.files: Optional[list[ProjectFile]] = None
+        self.readme: Optional[ProjectFile] = None
         self.total_size = 0
-        self.type = None
+        self.type: Optional[str] = None
         self.entry_points = []
         self.structure = None
         self.dependencies = []
@@ -33,7 +36,7 @@ class Project:
 
     
     def get_file_by_path(self,path):
-        for file in self.files: 
+        for file in (self.files or []): 
             if path == file.path:
                 return file
 
@@ -41,7 +44,7 @@ class Project:
 
     def get_files_by_language(self,language_name):
         files = []
-        for file in self.files:
+        for file in (self.files or []):
             if language_name == file.programming_language:
                 files.append(file)
 

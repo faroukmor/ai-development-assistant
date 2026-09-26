@@ -54,14 +54,10 @@ RETRIEVAL_BENCHMARK = [
     },
 ]
 
-# Semantic cases: paraphrases with no keyword overlap with the code names.
-# They fail keyword-only retrieval and only pass when the embedding search
-# is enabled (--semantic). Verified live against nomic-embed-text.
-#
-# Known semantic misses at THRESHOLD = 0.60 (kept as knowledge for tuning):
-#   "which file talks to the language model"   -> wrong target (project.py)
-#   "how does the assistant talk to ollama"    -> empty
-#   "who scans the folders and collects the files" -> empty
+# Paraphrases with no keyword overlap: they pass only with the embedding
+# search (--semantic). Known misses at THRESHOLD = 0.60: "how does the
+# assistant talk to ollama", "who scans the folders and collects the files"
+# (both empty), "which file talks to the language model" (wrong target).
 SEMANTIC_BENCHMARK = [
     {
         "question": "where is the project type detected",

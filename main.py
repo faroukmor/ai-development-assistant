@@ -1,25 +1,20 @@
+import os
 import time
 
-import core.assistant.ai_assistant as ai
+from core.assistant.ai_assistant import AIDevelopmentAssistant
 from core.llm.external_llm_client import ExternalLLMClient, AuthError
-
 from rich.console import Console
 from rich.panel import Panel
 from rich.markdown import Markdown
 from rich.prompt import Prompt
 
 
-DEFAULT_PROJECT_PATH = r"C:\Users\HP\Documents\Programming\GitHub repos\ai-development-assistant"
+DEFAULT_PROJECT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 console = Console()
 
 def read_hidden(label):
-    """Read a secret with a * per character, accepting typing and paste.
-
-    rich's password mode and getpass both swallowed all input in the Windows
-    terminal, so this reads the console directly via msvcrt; other platforms
-    fall back to getpass.
-    """
+    """Read a value without echoing it, printing * per character."""
     try:
         import msvcrt
     except ImportError:
@@ -45,6 +40,7 @@ def read_hidden(label):
             continue
         chars.append(ch)
         print("*", end="", flush=True)
+
 
 user_path = Prompt.ask("[bold blue]Project Path[/bold blue] [dim](Enter for default)[/dim]")
 
@@ -82,7 +78,7 @@ if use_external == "y":
 else:
     console.print("[dim]Running locally with Ollama — nothing leaves this machine.[/dim]")
 
-assistant = ai.AIDevelopmentAssistant(project_path, llm_client=llm)
+assistant = AIDevelopmentAssistant(project_path, llm_client=llm)
 
 
 console.print(
@@ -96,16 +92,11 @@ console.print(
 )
 
 def render_stream(question):
-    """Stream as normal scrollable output while generating, then the complete
-    answer once in a panel. Live redrawing is the only way to keep a growing
-    box, and it consumes the scrollback — so the stream stays plain and the
-    boxed version is printed once at the end.
-    """
+    """Stream the answer as plain output, then print it once in a panel."""
     stream = assistant.answer_stream(question)
     started = time.time()
 
-    # the setup (index, retrieval, context) runs inside the first next();
-    # errors here (401, unknown model, ollama down) surface immediately
+    # indexing, retrieval and context building happen inside the first next()
     with console.status("[bold cyan]Analyzing project...[/bold cyan]", spinner="dots"):
         first = next(stream, None)
     if first is None:
@@ -148,8 +139,7 @@ while True:
         break
 
     except Exception as e:
-        # The external provider rejected the key: offer to re-enter it in
-        # place and retry the same question, without restarting the app.
+        # rejected key: ask for a new one and retry the same question
         if isinstance(e, AuthError) and isinstance(assistant.llm_client, ExternalLLMClient):
             console.print(Panel(
                 f"[bold red]{type(e).__name__}[/bold red]\n{e}",

@@ -1,5 +1,5 @@
 import ast
-import core.project.symbol as S
+from core.project.symbol import Symbol
 class PythonSymbolVisitor(ast.NodeVisitor):
     def __init__(self,file):
         super().__init__()
@@ -23,7 +23,7 @@ class PythonSymbolVisitor(ast.NodeVisitor):
         return f"{node.name}({', '.join(args)})"
 
     def visit_ClassDef(self, node):
-        sym = S.Symbol(
+        sym = Symbol(
                         name=node.name,
                         symbol_type="class",
                         line=node.lineno,
@@ -42,10 +42,10 @@ class PythonSymbolVisitor(ast.NodeVisitor):
         old_parent = self.current_parent
         self.current_parent = sym
 
-        #دخلنا للدوال اللي داخل الكلاس
+        # visit the methods inside the class
         self.generic_visit(node)
 
-        #رجعنا الاب القديم 
+        # restore the previous parent
         self.current_parent = old_parent
         self.current_class = old_class
 
@@ -97,7 +97,7 @@ class PythonSymbolVisitor(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_FunctionDef(self, node):
-        sym = S.Symbol(name=node.name,
+        sym = Symbol(name=node.name,
                        symbol_type="function",
                        line=node.lineno,
                        end_line=node.end_lineno,
@@ -118,7 +118,7 @@ class PythonSymbolVisitor(ast.NodeVisitor):
         self.current_parent = old_parent
 
     def visit_AsyncFunctionDef(self, node):
-        sym = S.Symbol( name=node.name,
+        sym = Symbol( name=node.name,
                         symbol_type="async_function",
                         line=node.lineno,
                         end_line=node.end_lineno,
