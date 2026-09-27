@@ -3,4 +3,9 @@ class DependencyAnalyzer:
         self.project = project
 
     def detect_dependency(self):
-        pass
+        for file in (self.project.files or []):
+            if file.name == "requirements.txt":
+                if file.content == "":
+                    file.read_content()
+                self.project.dependencies = file.content.splitlines()
+                break

@@ -1,9 +1,9 @@
 ENTRY_POINT_NAMES = {
-    "main.py",
-    "app.py",
-    "run.py",
-    "server.py",
-    "manage.py",
+    "main",
+    "app",
+    "run",
+    "server",
+    "manage",
 }
 
 class EntryPointAnalyzer:
@@ -13,4 +13,4 @@ class EntryPointAnalyzer:
     def detect_entry_points(self):
         self.project.entry_points = []
         for file in (self.project.files or []):
-            if file.name in ENTRY_POINT_NAMES: self.project.entry_points.append(file)
+            if file.stem in ENTRY_POINT_NAMES: self.project.entry_points.append(file)

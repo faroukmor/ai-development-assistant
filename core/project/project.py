@@ -49,15 +49,3 @@ class Project:
                 files.append(file)
 
         return files
-
-#just for testing
-"""
-path = "C:\\Users\\HP\\Documents\\PYTHON Project\\ai-development-assistant"
-project  = Project(path)
-print(f"{project.name=}")
-print(f"{project.languages=}")
-project.load_files()
-project.build_index()
-for file in project.files:
-     print(file.name)
-"""

@@ -1,6 +1,7 @@
 from core.analyzers.project_type_analyzer import ProjectTypeAnalyzer
 from core.analyzers.entry_point_analyzer import EntryPointAnalyzer
 from core.analyzers.symbols_analyzer import SymbolAnalyzer
+from core.analyzers.dependency_analyzer import DependencyAnalyzer
 
 
 class ProjectAnalyzer:
@@ -12,5 +13,5 @@ class ProjectAnalyzer:
         ProjectTypeAnalyzer(self.project).detect_project_type()
         EntryPointAnalyzer(self.project).detect_entry_points()
         SymbolAnalyzer(self.project).detect_symbols()
-
+        DependencyAnalyzer(self.project).detect_dependency()
     

@@ -11,7 +11,7 @@ class ProjectIndexer:
         for file in (self.project.files or []):
             if file.programming_language in self.project.languages:
                 self.project.languages[file.programming_language] += 1
-                if file.name.lower() == "readme.md": 
+                if file.stem == "readme": 
                     self.project.readme = file
             else:
                 self.project.languages["unknown"] += 1
