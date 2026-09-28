@@ -25,8 +25,8 @@ class HybridRetriever:
     def rank_results(self, results):
         merged = {}
         for result in results:
-            key = result.file.path
-
+            key = (result.file.path, result.symbol.name if result.symbol else None)
+            
             if key in merged:
                 if result.score > merged[key].score:
                     result.symbol = result.symbol or merged[key].symbol

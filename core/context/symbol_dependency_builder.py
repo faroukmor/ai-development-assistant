@@ -23,7 +23,10 @@ class SymbolDependencyBuilder:
     def filter_matches(self, matches, parts, caller_identity):
         owner = parts[-2] if len(parts) >= 2 else None
         if owner in self.class_names:
-            return [match for match in matches if match.symbol.parent.name == owner]
+            return [
+                match for match in matches 
+                if match.symbol.parent is not None and match.symbol.parent.name == owner
+                ]
         return [match for match in matches
                 if self.get_symbol_identity(match.symbol, match.file) != caller_identity]
 
