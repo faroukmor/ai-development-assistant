@@ -1,4 +1,9 @@
 from core.context.symbol_dependency_builder import SymbolDependencyBuilder
+import builtins
+
+# قائمة تحتوي جميع أسماء دوال بايثون المدمجة
+BUILTIN_CALLS = {f"{name}()" for name in dir(builtins)}
+
 class SymbolContextBuilder:
     def __init__(self,project,retrievers):
         self.project = project
@@ -12,7 +17,8 @@ class SymbolContextBuilder:
         return "\n".join(lines[symbol.line - 1:symbol.end_line])
     
     def get_symbol_calls(self, symbol):
-        return "\n".join(f"- {call}" for call in symbol.calls)
+        calls = [call for call in set(symbol.calls) if call not in BUILTIN_CALLS]
+        return "\n".join(f"- {call}" for call in calls)
         
     def format_symbol(self, symbol, file, rendered_identities, score=None, reason=None):
         symbol_source = self.get_symbol_source(symbol, file)
