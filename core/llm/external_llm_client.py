@@ -5,10 +5,9 @@ import urllib.request
 
 DEFAULT_BASE_URL = "https://openrouter.ai/api/v1"
 
-# Any OpenAI-compatible endpoint works here (OpenAI, OpenRouter, Groq,
-# DeepSeek, Mistral, ...). Same contract as LLMClient: ask(messages) -> str.
+# Any OpenAI-compatible endpoint; same contract as LLMClient.
 class AuthError(RuntimeError):
-    """The provider rejected the API key (401). A new key fixes it."""
+    """The provider rejected the API key (401)."""
 
 
 class ExternalLLMClient:
@@ -24,7 +23,7 @@ class ExternalLLMClient:
         self.timeout = timeout
 
     def set_api_key(self, api_key):
-        """Replace the key in place (e.g. after a 401) without a restart."""
+        """Replace the API key."""
         if not api_key:
             raise RuntimeError("The API key cannot be empty")
         self.api_key = api_key
@@ -47,7 +46,7 @@ class ExternalLLMClient:
         )
 
     def _http_error(self, error):
-        """Translate an HTTPError into the most actionable message."""
+        """Map an HTTPError to a readable message."""
         if error.code == 401:
             return AuthError("The API key was rejected (401). Enter a new key.")
         if error.code == 429:
@@ -62,7 +61,7 @@ class ExternalLLMClient:
             )
         return RuntimeError(f"The external model request failed: HTTP {error.code}")
 
-    def ask(self, messages):
+    def chat(self, messages):
         try:
             with urllib.request.urlopen(self._request(messages), timeout=self.timeout) as response:
                 result = json.loads(response.read().decode("utf-8"))
@@ -80,12 +79,8 @@ class ExternalLLMClient:
             )
         return choices[0]["message"]["content"]
 
-    def ask_stream(self, messages):
-        """Yield the answer incrementally via the provider's SSE stream.
-
-        Same errors as ask(); they surface at the exact moment they happen.
-        Malformed lines are skipped, so one odd chunk cannot kill the stream.
-        """
+    def chat_stream(self, messages):
+        """Yield the answer from the provider's SSE stream."""
         try:
             with urllib.request.urlopen(self._request(messages, stream=True), timeout=self.timeout) as response:
                 for raw_line in response:

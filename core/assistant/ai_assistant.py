@@ -17,14 +17,14 @@ class AIDevelopmentAssistant:
 
     @property
     def model_info(self):
-        """Which model answers right now, and where it runs."""
+        """Model name and where it runs."""
         if self.llm_client is None:
             return f"{DEFAULT_MODEL} (Ollama, local)"
         base = self.llm_client.base_url.split("//")[-1].rstrip("/")
         return f"{self.llm_client.model_name} ({base}, external)"
 
     def _prepare_context(self, question):
-        """Index the project, retrieve relevant code, and assemble its context."""
+        """Build the context for a question: index, retrieve, assemble."""
         ProjectIndexer(self.project).build()
 
         if self.embedding_search is None:
@@ -37,7 +37,7 @@ class AIDevelopmentAssistant:
         return ProjectContextBuilder(self.project, retrieval_results).build_context()
 
     def _build_messages(self, context, question):
-        """Assemble the prompt sent to the model, with the context as source of truth."""
+        """Build the message list sent to the model."""
         return [
                     {
                         "role": "system",
@@ -77,14 +77,14 @@ Use it as your only source of truth.
                 ]
 
     def _llm(self):
-        """The client that talks to a model: the external one if configured, Ollama otherwise."""
+        """The configured client, or a local Ollama one."""
         return self.llm_client or LLMClient(DEFAULT_MODEL)
 
     def answer(self, question):
         messages = self._build_messages(self._prepare_context(question), question)
-        return self._llm().ask(messages)
+        return self._llm().chat(messages)
 
     def answer_stream(self, question):
-        """Yield the answer incrementally; the setup runs inside the first next()."""
+        """Yield the answer in chunks; the context is built on the first next()."""
         messages = self._build_messages(self._prepare_context(question), question)
-        yield from self._llm().ask_stream(messages)
+        yield from self._llm().chat_stream(messages)
