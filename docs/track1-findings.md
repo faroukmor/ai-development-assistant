@@ -6,7 +6,7 @@
 **Command:**
 
 ```
-python -m tests.project_bench "C:/Users/HP/Documents/PYTHON Project/bench/sqlalchemy" [--embed]
+python -m tests.project_bench <path-to-sqlalchemy-checkout> [--embed]
 ```
 
 The subject is kept outside this repository (sibling `bench/` folder) so nothing
