@@ -78,7 +78,8 @@ if use_external == "y":
 else:
     console.print("[dim]Running locally with Ollama — nothing leaves this machine.[/dim]")
 
-assistant = AIDevelopmentAssistant(project_path, llm_client=llm)
+with console.status("[bold cyan]Indexing project...[/bold cyan]", spinner="dots"):
+    assistant = AIDevelopmentAssistant(project_path, llm_client=llm)
 
 
 console.print(
@@ -96,7 +97,8 @@ def render_stream(question):
     stream = assistant.answer_stream(question)
     started = time.time()
 
-    # indexing, retrieval and context building happen inside the first next()
+    # retrieval and context building happen inside the first next()
+    # (indexing already done once at startup)
     with console.status("[bold cyan]Analyzing project...[/bold cyan]", spinner="dots"):
         first = next(stream, None)
     if first is None:
