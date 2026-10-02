@@ -21,6 +21,8 @@ class ProjectIndexer:
         self.project.is_indexed = True
 
     def build(self):
+        if self.project.is_indexed:
+            return
         ProjectLoader().load_files(self.project)
         self.index_files()
         ProjectAnalyzer(self.project).analyze()

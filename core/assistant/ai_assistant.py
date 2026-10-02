@@ -6,12 +6,13 @@ from core.retrieval.embedding_search import EmbeddingSearch
 from core.retrieval.hybrid_retriever import HybridRetriever
 
 
-DEFAULT_MODEL = "qwen2.5-coder:3b"
+DEFAULT_MODEL = "qwen2.5-coder:1.5b"
 
 
 class AIDevelopmentAssistant:
     def __init__(self,project_path,llm_client=None):
         self.project = Project(project_path)
+        ProjectIndexer(self.project).build()
         self.embedding_search = None
         self.llm_client = llm_client
 
@@ -25,8 +26,6 @@ class AIDevelopmentAssistant:
 
     def _prepare_context(self, question):
         """Build the context for a question: index, retrieve, assemble."""
-        ProjectIndexer(self.project).build()
-
         if self.embedding_search is None:
             self.embedding_search = EmbeddingSearch(self.project)
             self.embedding_search.build_index()
