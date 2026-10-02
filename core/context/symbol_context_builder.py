@@ -14,7 +14,11 @@ class SymbolContextBuilder:
         if not file.content:
             file.read_content()
         lines = file.content.splitlines()
-        return "\n".join(lines[symbol.line - 1:symbol.end_line])
+        start = max(0, symbol.line - 1)
+        end = min(symbol.end_line, len(lines))
+        if start >= end:
+            return ""
+        return "\n".join(lines[start:end])
     
     def get_symbol_calls(self, symbol):
         calls = [call for call in set(symbol.calls) if call not in BUILTIN_CALLS]
