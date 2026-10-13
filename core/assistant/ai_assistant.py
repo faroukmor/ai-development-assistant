@@ -28,7 +28,8 @@ class AIDevelopmentAssistant:
         """Build the context for a question: index, retrieve, assemble."""
         if self.embedding_search is None:
             self.embedding_search = EmbeddingSearch(self.project)
-            self.embedding_search.build_index()
+            if not self.embedding_search.load_index():
+                self.embedding_search.build_index()
 
         retriever = HybridRetriever(self.project, self.embedding_search)
         retrieval_results = retriever.search(question)

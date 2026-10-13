@@ -3,6 +3,7 @@ import json
 import time
 import urllib.request
 import numpy as np
+import os
 
 EMBED_MODEL = "nomic-embed-text"
 EMBED_URL = "http://localhost:11434/api/embed"
@@ -66,6 +67,68 @@ class EmbeddingSearch:
                 continue
             self.knowledge_base.append((symbol, file_path, text, embedding))
 
+        self.save_index()
+
+
+    def cache_path(self):
+        cache_dir = os.path.join(self.project.path, ".ai_assistant_cache")
+        return os.path.join(cache_dir, "embeddings.json")
+
+    def is_cache_valid(self, payload):
+        saved_at = payload.get("saved_at", 0)
+        try:
+            newest = max(
+                os.path.getmtime(f.path) for f in (self.project.files or [])
+            )
+        except (OSError, ValueError):
+            return False
+        return newest <= saved_at
+
+    def save_index(self):
+        entries = {}
+        for symbol, file_path, text, embedding in self.knowledge_base:
+            vec = embedding.tolist() if hasattr(embedding, "tolist") else embedding
+            entries.setdefault(file_path, []).append([symbol.name, text, vec])
+        payload = {"saved_at": time.time(), "entries": entries}
+        try:
+            os.makedirs(os.path.dirname(self.cache_path()), exist_ok=True)
+            with open(self.cache_path(), "w", encoding="utf-8") as f:
+                json.dump(payload, f)
+        except (OSError, TypeError, ValueError) as e:
+            print(f"(save_index) could not write cache: {e}")
+
+    def load_index(self):
+        path = self.cache_path()
+        if not os.path.exists(path):
+            return False
+        try:
+            with open(path, encoding="utf-8") as f:
+                payload = json.load(f)
+        except (OSError, ValueError) as e:
+            print(f"(load_index) ignoring corrupt cache: {e}")
+            return False
+        if not self.is_cache_valid(payload):
+            return False
+        entries = payload.get("entries", {})
+        loaded = []
+        for file_path, rows in entries.items():
+            file = self.project.get_file_by_path(file_path)
+            if file is None:
+                continue
+            by_name = {s.name: s for s in file.symbols}
+            for row in rows:
+                if len(row) < 3:
+                    continue
+                symbol_name, text, vec = row[0], row[1], row[2]
+                symbol = by_name.get(symbol_name)
+                if symbol is None:
+                    continue
+                loaded.append((symbol, file_path, text, np.array(vec)))
+        if not loaded:
+            return False
+        self.knowledge_base = loaded
+        print(f"(load_index) loaded {len(loaded)} entries from cache.")
+        return True
     def get_embeddings(self, texts, verbose=True):
         """Embed every text in batches."""
         embeddings = []

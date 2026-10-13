@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 tests/tmp/
 .idea/
+.ai_assistant_cache/
+knowledge_base.csv
